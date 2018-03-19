@@ -1,3 +1,3 @@
 #!/usr/bin/env dash
 
-/usr/bin/cat $HOME/.cache/wal/colors.sh | /usr/bin/grep -E "color[[:digit:]]" | head -8 | /usr/bin/sed -E "s/color[[:digit:]]{1,2}=//g" | /usr/bin/tr -d "'" > $XDG_CONFIG_HOME/vis/colors/wal
+/usr/bin/cat $HOME/.cache/wal/colors.sh | /usr/bin/grep -E "color[[:digit:]]" | head -9 | tail -n 8 | /usr/bin/sed -E "s/color[[:digit:]]{1,2}=//g" | /usr/bin/tr -d "'" > $XDG_CONFIG_HOME/vis/colors/wal && echo "wal-vis updated"
