@@ -1,0 +1,5 @@
+#!/usr/bin/env dash
+
+# Source: https://github.com/wstam88/rofi-fontawesome
+
+echo -n "fa-$(curl -s https://raw.githubusercontent.com/wstam88/rofi-fontawesome/master/icon-list.txt | rofi -dmenu -i -markup-rows -p "" -columns 6 -width 80 -lines 20 -bw 2 | cut -d\' -f2 )" | xclip -selection clipboard

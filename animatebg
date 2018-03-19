@@ -1,0 +1,10 @@
+#!/bin/dash
+
+loopingvid=$1
+
+if [ -z $loopingvid ]
+then
+  loopingvid=~/Videos/xwinwraps/koi_pond.mp4
+fi
+
+/usr/bin/xwinwrap -b -fs -sp -fs -ov -ni -nf -- /usr/bin/mpv -wid WID --no-config --keepaspect=no --loop --no-border --vd-lavc-fast --x11-bypass-compositor=no --aid=no --vo=xv --hwdec=auto --really-quiet $loopingvid

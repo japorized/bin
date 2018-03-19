@@ -1,0 +1,17 @@
+#!/usr/bin/env dash
+
+img=$1
+
+if [ -z "${img}" ]; then
+  echo "Error: No argument provided. Please provide image file path."
+  exit 1
+fi
+
+/usr/bin/notify-send "Running: wal-it"
+
+$HOME/.local/bin/wal -i "${img}" -g
+$HOME/.local/bin/wal-steam -w
+$HOME/.bin/wal-vis
+/usr/bin/betterlockscreen -u "${img}"
+
+/usr/bin/notify-send "Completed: wal-it"
