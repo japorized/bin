@@ -2,4 +2,13 @@
 
 # Source: https://github.com/wstam88/rofi-fontawesome
 
-echo -n "fa-$(curl -s https://raw.githubusercontent.com/wstam88/rofi-fontawesome/master/icon-list.txt | rofi -dmenu -i -markup-rows -p "" -columns 6 -width 80 -lines 20 -bw 2 | cut -d\' -f2 )" | xclip -selection clipboard
+option=$1
+
+if test "$option" = "fa5"
+then
+  echo -n "fa-$(curl -s https://raw.githubusercontent.com/wstam88/rofi-fontawesome/master/fa5-icon-list.txt | rofi -dmenu -i -markup-rows -p "" -columns 6 -width 80 -lines 20 -bw 2 | cut -d\' -f2 )" | xclip -selection clipboard
+else
+  echo -n "fa-$(curl -s https://raw.githubusercontent.com/wstam88/rofi-fontawesome/master/icon-list.txt | rofi -dmenu -i -markup-rows -p "" -columns 6 -width 80 -lines 20 -bw 2 | cut -d\' -f2 )" | xclip -selection clipboard
+fi
+  
+
