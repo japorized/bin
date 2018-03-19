@@ -1,17 +1,33 @@
 #!/usr/bin/env dash
 
 img=$1
+lock=$2
 
-if [ -z "${img}" ]; then
+if test -z "${img}"
+then
   echo "Error: No argument provided. Please provide image file path."
   exit 1
 fi
 
 /usr/bin/notify-send "Running: wal-it"
 
+echo "Running: wal"
 $HOME/.local/bin/wal -i "${img}" -g
+
+echo "\nRunning: wal-steam"
 $HOME/.local/bin/wal-steam -w
+
+echo "\nRunning: wal-vis"
 $HOME/.bin/wal-vis
-/usr/bin/betterlockscreen -u "${img}"
+
+if [ "$lock" = "lock" ]
+then
+  echo "\nRunning: betterlockscreen -u"
+  /usr/bin/betterlockscreen -u "${img}"
+fi
+
+echo -n "\nRe-sourcing bspwmrc"
+sh -c "$HOME/.config/bspwm/bspwmrc &"
+echo ": Done"
 
 /usr/bin/notify-send "Completed: wal-it"
