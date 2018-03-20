@@ -30,4 +30,9 @@ echo -n "\nRe-sourcing bspwmrc"
 sh -c "$HOME/.config/bspwm/bspwmrc &"
 echo ": Done"
 
+echo -n "Refreshing lemonbar"
+sh -c "$HOME/.bin/refresh-indicators.sh"
+echo ": Done"
+
+sleep 0.5
 /usr/bin/notify-send "Completed: wal-it"
