@@ -9,6 +9,19 @@ then
   exit 1
 fi
 
+# Setting up frequently used wallpapers
+case $img in
+  "pinetrees")
+    img=$HOME/Pictures/Wallpapers/pinetrees.png
+    ;;
+  "hydrangea")
+    img=$HOME/Pictures/Wallpapers/konohanakitan_hydrangea.jpg
+    ;;
+  "oldbridge")
+    img=$HOME/Pictures/Wallpapers/old-bridge-intothedistance.jpg
+    ;;
+esac
+
 /usr/bin/notify-send "Running: wal-it"
 
 echo "Running: wal"
@@ -20,19 +33,19 @@ $HOME/.local/bin/wal-steam -w
 echo "\nRunning: wal-vis"
 $HOME/.bin/wal-vis
 
-if [ "$lock" = "lock" ]
-then
-  echo "\nRunning: betterlockscreen -u"
-  /usr/bin/betterlockscreen -u "${img}"
-fi
-
-echo -n "\nRe-sourcing bspwmrc"
-sh -c "$HOME/.config/bspwm/bspwmrc &"
+echo -n "\nRefreshing bspwm colors"
+sh -c "$HOME/.config/bspwm/bspwm-colors.sh &"
 echo ": Done"
 
 echo -n "Refreshing lemonbar"
 sh -c "$HOME/.bin/refresh-indicators.sh"
 echo ": Done"
+
+if [ "$lock" = "lock" ]
+then
+  echo "\nRunning: betterlockscreen -u"
+  /usr/bin/betterlockscreen -u "${img}"
+fi
 
 sleep 0.5
 /usr/bin/notify-send "Completed: wal-it"

@@ -1,5 +1,7 @@
 # My bin Files
 
+See also: [`japorized/dotfiles`](https://github.com/japorized/dotfiles)
+
 ## Dependency table
 
 * `animatebg` - `xwinwrap, mpv`
