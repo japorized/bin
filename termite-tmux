@@ -1,0 +1,4 @@
+#!/usr/bin/env dash
+
+(cat $HOME/.cache/wal/sequences &)
+/usr/bin/tmux

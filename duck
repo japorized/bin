@@ -1,0 +1,3 @@
+#!/usr/bin/env dash
+
+echo "" | /usr/bin/rofi -dmenu -p "DuckduckGo" | /usr/bin/xargs -I{} /usr/bin/firefox https://duckduckgo.com/\?q\=\{\}
