@@ -9,7 +9,7 @@
 MUSIC_DIR=$HOME/Music
 COVER=/tmp/cover.jpg
 
-. "${HOME}/.cache/wal/colors.sh"
+# . "${HOME}/.cache/wal/colors.sh"
 
 function reset_background
 {
