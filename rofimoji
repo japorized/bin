@@ -1,0 +1,3 @@
+#!/usr/bin/env dash
+
+/usr/bin/rofi -modi 'emoji:~/.config/rofi/rofiemoji/rofiemoji.sh' -show emoji

@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
-$CONFIG/lemonbar/datetime.sh &
-$CONFIG/lemonbar/battery.sh &
+$XDG_CONFIG_HOME/lemonbar/datetime.sh &
+$XDG_CONFIG_HOME/lemonbar/battery.sh &
 sleep 5
 kill 0
 exit 0
