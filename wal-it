@@ -1,7 +1,7 @@
 #!/usr/bin/env dash
 
 img=$1
-lock=$2
+# lock=$2
 
 if test -z "${img}"
 then
@@ -25,7 +25,7 @@ esac
 /usr/bin/notify-send "Running: wal-it"
 
 echo "Running: wal"
-$HOME/.local/bin/wal -i "${img}" -g
+$HOME/.local/bin/wal -i "${img}" -g --backend colorz
 
 echo "\nRunning: wal-steam"
 $HOME/.local/bin/wal-steam -w
@@ -41,11 +41,11 @@ echo -n "Refreshing lemonbar"
 sh -c "$HOME/.bin/refresh-indicators.sh"
 echo ": Done"
 
-if [ "$lock" = "lock" ]
-then
-  echo "\nRunning: betterlockscreen -u"
-  /usr/bin/betterlockscreen -u "${img}"
-fi
+# if [ "$lock" = "lock" ]
+# then
+#   echo "\nRunning: betterlockscreen -u"
+#   /usr/bin/betterlockscreen -u "${img}"
+# fi
 
 sleep 0.5
 /usr/bin/notify-send "Completed: wal-it"

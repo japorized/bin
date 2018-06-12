@@ -1,4 +1,6 @@
 #!/usr/bin/env dash
 
 (cat $HOME/.cache/wal/sequences &)
+bspc node -t floating
+bspc node -v +750 +470
 /usr/bin/ncmpcpp -c $HOME/.config/ncmpcpp/cover-config

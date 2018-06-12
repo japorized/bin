@@ -7,7 +7,7 @@
 # Licensed under The MIT License: http://opensource.org/licenses/MIT
 
 MUSIC_DIR=$HOME/Music
-COVER=/tmp/cover.jpg
+COVER=$HOME/.cache/cover.jpg
 
 # . "${HOME}/.cache/wal/colors.sh"
 
