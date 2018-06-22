@@ -16,6 +16,7 @@ See also: [`japorized/dotfiles`](https://github.com/japorized/dotfiles)
 * `tabbed-zathura` - `zathura, tabbed`
 * `termite-tmux` - `termite, tmux`
 * `termite-vim-simplenote` - `termite, vim` (with [simplenote.vim](https://github.com/mrtazz/simplenote.vim))
+* `thunar-media-info.sh` - `sh, ffmpeg, zenity` [Source](https://github.com/cytopia/thunar-custom-actions)
 * `tmpshow-datetime-battery.sh` - `lemonbar`
 * `urxvt-ncmpcpp` - `urxvt, ncmpcpp, mpd`
 * `wal-it` - `pywal, betterlockscreen, wal-steam, refresh-lemonbar.sh, vis [optional]`

@@ -1,7 +1,10 @@
 #!/usr/bin/env dash
 
+prp="\e[35m"
+rst="\e[0m"
+
 img=$1
-# lock=$2
+backend=$2
 
 if test -z "${img}"
 then
@@ -24,20 +27,20 @@ esac
 
 /usr/bin/notify-send "Running: wal-it"
 
-echo "Running: wal"
-$HOME/.local/bin/wal -i "${img}" -g --backend colorz
+echo "${prp}Running: wal${rst}"
+$HOME/.local/bin/wal -i "${img}" -g --backend $backend
 
-echo "\nRunning: wal-steam"
+echo "\n${prp}Running: wal-steam${rst}"
 $HOME/.local/bin/wal-steam -w
 
-echo "\nRunning: wal-vis"
+echo "\n${prp}Running: wal-vis${rst}"
 $HOME/.bin/wal-vis
 
-echo -n "\nRefreshing bspwm colors"
+echo -n "\n${prp}Refreshing bspwm colors${rst}"
 sh -c "$HOME/.config/bspwm/bspwm-colors.sh &"
 echo ": Done"
 
-echo -n "Refreshing lemonbar"
+echo -n "${prp}Refreshing lemonbar${rst}"
 sh -c "$HOME/.bin/refresh-indicators.sh"
 echo ": Done"
 

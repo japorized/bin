@@ -8,3 +8,4 @@ then
 fi
 
 /usr/bin/xwinwrap -b -fs -sp -fs -ov -ni -nf -- /usr/bin/mpv -wid WID --no-config --keepaspect=no --loop --no-border --vd-lavc-fast --x11-bypass-compositor=no --aid=no --vo=xv --hwdec=auto --really-quiet $loopingvid
+# /usr/bin/xwinwrap -b -fs -sp -fs -ov -ni -nf -- /usr/bin/gifview -w WID ~/Pictures/Wallpapers/town_rain.gif -a

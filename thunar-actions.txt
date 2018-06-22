@@ -1,0 +1,77 @@
+# == TEMPLATE ==
+# Name                  : 
+# Description           : 
+# Command               : 
+# Keyboard Shortcut     : 
+# Appearance Conditions : 
+# File Pattern          : 
+
+Name                  : Copy file(s) to...
+Description           : copy file(s) to target folder
+Command               : /usr/bin/cp -nR -t `/usr/bin/zenity --title="Copy files to" --file-selection --directory` %F
+Keyboard Shortcut     : none
+Appearance Conditions : all
+File Pattern          : *
+
+Name                  : Move file(s) to
+Description           : move file(s) to target folder
+Command               : /usr/bin/mv %F `/usr/bin/zenity --title="Move files to" --file-selection --directory`
+Keyboard Shortcut     : none
+Appearance Conditions : all
+File Pattern          : *
+
+Name                  : Create symlink at...
+Description           : creates a symlink of target file(s) to location
+Command               : /usr/bin/ln -s %F `/usr/bin/zenity --title="Create symlink at" --file-selection --directory`
+Keyboard Shortcut     : none
+Appearance Conditions : all except Audio, Video
+File Pattern          : *
+                        
+Name                  : Copy pwd
+Description           : copies pwd to clipboard
+Command               : echo -n %f | /usr/bin/xclip -selection "clipboard"
+Keyboard Shortcut     : Shift+Ctrl+Y
+Appearance Conditions : Directories
+File Pattern          : *
+                        
+Name                  : Merge PDF
+Description           : merge PDFs into one PDF
+Command               : /usr/bin/pdftk %F cat output `/usr/bin/zenity --entry --text="Enter file name:" --entry-text=%n.pdf`
+Keyboard Shortcut     : none
+Appearance Conditions : Other
+File Pattern          : *.pdf
+
+Name                  : Show media info
+Description           : displays media information
+Command               : /home/japorized/.bin/thunar-media-info.sh -f %f -t %n
+Keyboard Shortcut     : none
+Appearance Conditions : Audio, Video
+File Pattern          : *
+
+Name                  : Set as wallpaper
+Description           : set as X11 wallpaper
+Command               : /usr/bin/feh --bg-scale %f
+Keyboard Shortcut     : none
+Appearance Conditions : Image
+File Pattern          : *
+
+Name                  : Use as Wallpaper and Color Scheme (pywal)
+Description           : set as X11 wallpaper and use color scheme with pywal backend
+Command               : /home/japorized/.bin/wal-it %f wal
+Keyboard Shortcut     : none
+Appearance Conditions : Image
+File Pattern          : *
+
+Name                  : Use as Wallpaper and Color Scheme (colorz)
+Description           : set as X11 wallpaper and use color scheme with colorz backend
+Command               : /home/japorized/.bin/wal-it %f colorz
+Keyboard Shortcut     : none
+Appearance Conditions : Image
+File Pattern          : *
+
+Name                  : Use as animating wallpaper
+Description           : set as animating wallpaper
+Command               : /home/japorized/.bin/animatebg %f
+Keyboard Shortcut     : none
+Appearance Conditions : Image, Video
+File Pattern          : *.gif;*.mp4;*.mkv
