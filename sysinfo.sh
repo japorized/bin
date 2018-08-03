@@ -18,7 +18,7 @@ echo -e "   ${red}█████   ${grn}█████   ${ylw}████�
 echo -e
 echo -e "   ${cyn}WM ${rst}      bspwm              ${cyn}OS ${rst}       Antergos (base)"
 echo -e "   ${cyn}host ${rst}    MacBookPro11,1     ${cyn}shell ${rst}    zsh"
-echo -e "   ${cyn}editor ${rst}  nvim, subl         ${cyn}term${rst}      termite, urxvt"
+echo -e "   ${cyn}editor ${rst}  nvim, subl         ${cyn}term${rst}      st, urxvt"
 echo -e "   ${cyn}music ${rst}   mpd                ${cyn}term font${rst} xos4 Terminus"
 echo -e "   ${cyn}sys font${rst} helvetica neue"
 echo -e

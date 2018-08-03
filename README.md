@@ -9,7 +9,9 @@ See also: [`japorized/dotfiles`](https://github.com/japorized/dotfiles)
 * `displaysleep` - `xset`
 * `duck` - `rofi, xargs`
 * `move-lemonbar-to-back.sh` - `xdotool`
+* `surf-open.sh` - `surf, tabbed`
 * `refresh-indicators.sh` - `lemonbar`
+* `RNGesus` - `[none]`
 * `rofiawesome` - `rofi`
 * `rofimoji` - `rofi`
 * `show-song-cover.sh` - `mpd, mpc, imagemagick`

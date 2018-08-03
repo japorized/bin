@@ -5,11 +5,23 @@ rst="\e[0m"
 
 img=$1
 backend=$2
+light=$3
 
 if test -z "${img}"
 then
   echo "Error: No argument provided. Please provide image file path."
   exit 1
+fi
+
+if [ "$img" = "-h" ] || [ "$img" == "--help" ]
+then
+  echo "Usage: wal-it <img_path> <backend> <light=light>
+  
+backend choices: wal, colorz
+
+Pass 'light' as the 3rd argument for light background. Leave empty for default dark.
+All arguments are mandatory."
+  exit 0
 fi
 
 # Setting up frequently used wallpapers
@@ -28,7 +40,16 @@ esac
 /usr/bin/notify-send "Running: wal-it"
 
 echo "${prp}Running: wal${rst}"
-$HOME/.local/bin/wal -i "${img}" -g --backend $backend
+echo $light
+if [ "$light" = "light" ]
+then
+  $HOME/.local/bin/wal -l -i "${img}" -g --backend $backend
+elif [ "$light" != "" ]
+then
+  echo "pass 'light' for setting to light mode"
+else
+  $HOME/.local/bin/wal -i "${img}" -g --backend $backend
+fi
 
 echo "\n${prp}Running: wal-steam${rst}"
 $HOME/.local/bin/wal-steam -w

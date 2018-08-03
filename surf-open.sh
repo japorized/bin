@@ -3,16 +3,18 @@
 # See the LICENSE file for copyright and license details. 
 #
 
-xidfile="/tmp/tabbed-zathura.xid"
+xidfile="/tmp/tabbed-surf.xid"
 uri=""
 
 if [ "$#" -gt 0 ];
 then
 	uri="$1"
+else
+  uri="https://japorized.github.io/elementary"
 fi
 
 runtabbed() {
-	tabbed -dcn tabbed-zathura -p +1 -r 2 zathura -e '' "$uri" >"$xidfile" \
+	tabbed -dcn tabbed-surf -p +1 -r 2 surf -e '' "$uri" >"$xidfile" \
 		2>/dev/null &
 }
 
@@ -26,7 +28,7 @@ else
 	then
 		runtabbed
 	else
-		zathura -e "$xid" "$uri" >/dev/null 2>&1 &
+		surf -e "$xid" "$uri" >/dev/null 2>&1 &
 	fi
 fi
 

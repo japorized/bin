@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+NUM=$#
+if [[ "$NUM" = "0" ]]
+then
+    echo "Please pass at least 1 argument"
+    exit 1
+fi
+RNG=$(echo $RANDOM % $NUM + 1 | bc)
+echo ${!RNG}
