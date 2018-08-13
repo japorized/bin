@@ -1,0 +1,12 @@
+#!/usr/bin/env dash
+
+if [ "$1" = "" ]
+then
+  echo "ERROR: Please provide file name (e.g. \`new-classnote PMATH347\`)"
+  exit 1
+fi
+
+DIR=$HOME/Documents/TeX_Notes/$1
+
+mkdir $DIR
+vim $DIR/classnotes.tex

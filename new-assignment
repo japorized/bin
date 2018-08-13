@@ -1,0 +1,13 @@
+#!/usr/bin/env dash
+
+if [ "$1" = "" ]
+then
+  echo "ERROR: Please provide file name (e.g. \`new-assignment a1\`)"
+  exit 1
+fi
+
+NEWFILE=$1.tex
+
+mkdir $(pwd)/$1
+cp $HOME/Documents/TeX_Notes/setup-nvim/tex_assignment.sh $(pwd)/$1/$NEWFILE
+vim $(pwd)/$1/$NEWFILE

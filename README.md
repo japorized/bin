@@ -9,6 +9,8 @@ See also: [`japorized/dotfiles`](https://github.com/japorized/dotfiles)
 * `displaysleep` - `xset`
 * `duck` - `rofi, xargs`
 * `move-lemonbar-to-back.sh` - `xdotool`
+* `new-classnote` - `vim` or `nvim`
+* `new-assignment` - `vim` or `nvim `
 * `surf-open.sh` - `surf, tabbed`
 * `refresh-indicators.sh` - `lemonbar`
 * `RNGesus` - `[none]`
