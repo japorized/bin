@@ -1,6 +1,6 @@
 # My bin Files
 
-See also: [`japorized/dotfiles`](https://github.com/japorized/dotfiles)
+See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 
 ## Dependency table
 
