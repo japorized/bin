@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+$HOME/.bin/st -n "st" -e $HOME/.bin/wal-tmux

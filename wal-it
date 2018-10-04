@@ -13,7 +13,7 @@ then
   exit 1
 fi
 
-if [ "$img" = "-h" ] || [ "$img" == "--help" ]
+if [ "$img" = "-h" ] || [ "$img" = "--help" ]
 then
   echo "Usage: wal-it <img_path> <backend> <light=light>
   
@@ -44,15 +44,12 @@ echo $light
 if [ "$light" = "light" ]
 then
   $HOME/.local/bin/wal -l -i "${img}" -g --backend $backend
-elif [ "$light" != "" ]
+elif [ "$light" != "" ] || [ "$light" = "dark" ]
 then
-  echo "pass 'light' for setting to light mode"
-else
   $HOME/.local/bin/wal -i "${img}" -g --backend $backend
+else
+  echo "pass 'light' for setting to light mode"
 fi
-
-echo "\n${prp}Running: wal-steam${rst}"
-$HOME/.local/bin/wal-steam -w
 
 echo "\n${prp}Running: wal-vis${rst}"
 $HOME/.bin/wal-vis

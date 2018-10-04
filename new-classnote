@@ -9,4 +9,4 @@ fi
 DIR=$HOME/Documents/TeX_Notes/$1
 
 mkdir $DIR
-vim $DIR/classnotes.tex
+/usr/bin/nvim $DIR/classnotes.tex

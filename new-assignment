@@ -8,6 +8,9 @@ fi
 
 NEWFILE=$1.tex
 
-mkdir $(pwd)/$1
+if [ ! -d "$pwd" ]
+then
+  mkdir $(pwd)/$1
+fi
 cp $HOME/Documents/TeX_Notes/setup-nvim/tex_assignment.sh $(pwd)/$1/$NEWFILE
-vim $(pwd)/$1/$NEWFILE
+nvim $(pwd)/$1/$NEWFILE
