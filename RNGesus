@@ -6,5 +6,18 @@ then
     echo "Please pass at least 1 argument"
     exit 1
 fi
+
+if [[ "$1" = "-h" ]]
+then
+  echo "Usage: RNGesus [OPTIONS] [ENTRIES]
+  
+Let RNGesus decide which entry to pick for you.
+
+OPTIONS:
+ -h   display this help message"
+
+  exit 0
+fi
+
 RNG=$(echo $RANDOM % $NUM + 1 | bc)
 echo ${!RNG}

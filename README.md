@@ -17,6 +17,7 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 * `rofiawesome` - `rofi`
 * `rofimoji` - `rofi`
 * `show-song-cover.sh` - `mpd, mpc, imagemagick`
+* `song-change-notify.sh` - `libnotify, mpc`
 * `ss-with-preview.sh` - `imagemagick, n30f, lemonbar, scrot`
 * `st-tmux` - `st, tmux`
 * `surf-open.sh` - `surf, tabbed`
