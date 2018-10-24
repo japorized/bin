@@ -2,13 +2,32 @@
 
 # Source: https://github.com/wstam88/rofi-fontawesome
 
-option=$1
+arg=$1
 
-if test "$option" = "fa5"
+options='-columns 3 -width 80 -lines 20 -bw 2 -yoffset -2'
+
+if [ "$arg" = "update" ]
 then
-  echo -n "fa-$(curl -s https://raw.githubusercontent.com/wstam88/rofi-fontawesome/master/fa5-icon-list.txt | rofi -dmenu -i -markup-rows -p "" -columns 6 -width 80 -lines 20 -bw 2 | cut -d\' -f2 )" | xclip -selection clipboard
+  curl -s https://raw.githubusercontent.com/wstam88/rofi-fontawesome/master/fa5-icon-list.txt > $HOME/.cache/fa5-icon-list.txt
+  curl -s https://raw.githubusercontent.com/wstam88/rofi-fontawesome/master/icon-list.txt > $HOME/.cache/icon-list.txt
+elif [ "$arg" = "fa5" ]
+then
+  selected=$(\
+    cat $HOME/.cache/fa5-icon-list.txt \
+      | rofi -dmenu -i -markup-rows \
+      ${options} \
+      -p "FontAwesome 5")
 else
-  echo -n "fa-$(curl -s https://raw.githubusercontent.com/wstam88/rofi-fontawesome/master/icon-list.txt | rofi -dmenu -i -markup-rows -p "" -columns 6 -width 80 -lines 20 -bw 2 | cut -d\' -f2 )" | xclip -selection clipboard
+  selected=$(\
+    cat $HOME/.cache/icon-list.txt \
+      | rofi -dmenu -i -markup-rows \
+      ${options} \
+      -p "FontAwesome")
 fi
+  # exit if nothing is selected
+  [[ -z $selected ]] && exit
   
-
+  echo $(echo -n "$selected" |\
+    awk -F';' -v RS='>' '
+      NR==2{sub("&#x","",$1);print "\\u" $1;exit}'
+  ) |  xclip -selection clipboard

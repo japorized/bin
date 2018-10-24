@@ -1,4 +1,4 @@
 #!/usr/bin/env dash
 
-(cat $HOME/.cache/wal/sequences &)
+(cat $HOME/.cache/wpgtk-term.color &)
 /usr/bin/tmux
