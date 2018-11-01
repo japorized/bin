@@ -1,33 +1,81 @@
-#!/usr/bin/env dash
+#!/usr/bin/env bash
 
 # Source: https://github.com/wstam88/rofi-fontawesome
 
-arg=$1
+rst="\e[0m"
+mgt="\e[1;35m"
+cyn="\e[1;36m"
+dmgt="\e[0;35m"
+dcyn="\e[0;36m"
+
+action=$1
+arg=$2
+
+usage() {
+echo "             __ _                                              "
+echo "   __ ___   / _(_) __ ___      _____  ___  ___  _ __ ___   ___ "
+echo " | '__/ _ \| |_| |/ _\` \ \ /\ / / _ \/ __|/ _ \| '_ \` _ \ / _ \ "
+echo " | | | (_) |  _| | (_| |\ V  V /  __/\__ \ (_) | | | | | |  __/"
+echo " |_|  \___/|_| |_|\__,_| \_/\_/ \___||___/\___/|_| |_| |_|\___|"
+echo ""
+echo -e "  ${mgt}Usage${rst}: rofiawesome <s|i|p|h|u> <fa4|fa5>
+
+  ${mgt}Options${rst}:
+    s (default)    copy icon escape character to clipboard
+    i              copy icon to clipboard
+    p              copy icon tag to clipboard
+    h              show this help message
+    u              update icon cache (location: $HOME/.cache/)
+    fa4 (default)  show FontAwesome4 icons
+    fa5            show FontAwesome5 icons"
+}
+
+case $action in
+  h)
+    usage
+    exit 0
+    ;;
+  ""|s|i|p|u) ;;
+  *)
+    usage
+    exit 1
+esac
 
 options='-columns 3 -width 80 -lines 20 -bw 2 -yoffset -2'
 
-if [ "$arg" = "update" ]
+if [ "$action" = "u" ]
 then
   curl -s https://raw.githubusercontent.com/wstam88/rofi-fontawesome/master/fa5-icon-list.txt > $HOME/.cache/fa5-icon-list.txt
   curl -s https://raw.githubusercontent.com/wstam88/rofi-fontawesome/master/icon-list.txt > $HOME/.cache/icon-list.txt
 elif [ "$arg" = "fa5" ]
 then
-  selected=$(\
-    cat $HOME/.cache/fa5-icon-list.txt \
-      | rofi -dmenu -i -markup-rows \
-      ${options} \
-      -p "FontAwesome 5")
-else
-  selected=$(\
-    cat $HOME/.cache/icon-list.txt \
-      | rofi -dmenu -i -markup-rows \
-      ${options} \
-      -p "FontAwesome")
+  icons_path=$HOME/.cache/fa5-icon-list.txt
+else # $arg falls through if it's not fa4
+  icons_path=$HOME/.cache/icon-list.txt
 fi
-  # exit if nothing is selected
-  [[ -z $selected ]] && exit
-  
-  echo $(echo -n "$selected" |\
+
+selected=$(\
+  cat $icons_path \
+    | rofi -dmenu -i -markup-rows \
+    ${options} \
+    -p "FontAwesome")
+
+# exit if nothing is selected
+[[ -z $selected ]] && exit
+
+if [ ! "$action" = "p" ]
+then
+  fa=$(echo -n "$selected" |\
     awk -F';' -v RS='>' '
       NR==2{sub("&#x","",$1);print "\\u" $1;exit}'
-  ) |  xclip -selection clipboard
+  )
+else
+  fa=$(echo -n "$selected" | cut -d\' -f2)
+fi
+
+if [ "$action" = "i" ]
+then
+  echo -en "$fa" | xclip -selection clipboard
+else
+  echo -n "$fa" | xclip -selection clipboard
+fi

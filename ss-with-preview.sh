@@ -17,7 +17,7 @@ esac
 /usr/bin/convert $HOME/Pictures/$datetime.png -resize x300 $HOME/tmp/lastscrot.png
 
 # Display scrot for preview
-~/.bin/n30f -x 2050 -y 1270 $HOME/tmp/lastscrot.png -c "/usr/bin/feh $HOME/Pictures/$datetime.png" &
+~/.bin/n30f -x 2050 -y 1270 $HOME/tmp/lastscrot.png -c "/usr/bin/gimp $HOME/Pictures/$datetime.png" &
 scrotpid=$!
 
 ~/.config/lemonbar/scrot-notification.sh
