@@ -4,8 +4,10 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 
 ## Dependency table
 
+* `256colors` - `bash`
 * `animatebg` - `xwinwrap, mpv`
 * `cleandekstop.sh` - `lemonbar`
+* `color.sh` - `bash`
 * `displaysleep` - `xset`
 * `duck` - `rofi, xargs`
 * `move-lemonbar-to-back.sh` - `xdotool`
@@ -16,6 +18,7 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 * `RNGesus` - `[none]`
 * `rofiawesome` - `rofi` (credits to [wstam/rofi-fontawesome](https://github.com/wstam88/rofi-fontawesome))
 * `rofimoji` - `rofi`
+* `screenkey` - `python, screenkey`
 * `show-song-cover.sh` - `mpd, mpc, imagemagick`
 * `song-change-notify.sh` - `libnotify, mpc`
 * `ss-with-preview.sh` - `imagemagick, n30f, lemonbar, scrot, gimp`

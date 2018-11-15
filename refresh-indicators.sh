@@ -9,7 +9,7 @@ then
   param2=$2
 fi
 
-killall lemonbar
+for l in $(cat ~/.cache/lemon.pid) ; do kill -s TERM $l ; done && killall lemonbar
 sh -c "$HOME/.config/bspwm/indicators $param1 $param2 &"
 
 sleep 0.5
