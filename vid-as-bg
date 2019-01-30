@@ -1,0 +1,3 @@
+#!/usr/bin/env dash
+
+/usr/bin/xwinwrap -b -fs -sp -ov -- /usr/bin/mpv -wid WID --no-config --no-border --vd-lavc-fast --x11-bypass-compositor=no $1

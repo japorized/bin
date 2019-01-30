@@ -1,0 +1,12 @@
+#!/usr/bin/env dash
+
+trackpadStatus=$(cat $HOME/.cache/trackpadStatus)
+
+if [ "$trackpadStatus" = "on" ]
+then
+  xinput disable "SynPS/2 Synaptics TouchPad"
+  echo "off" > $HOME/.cache/trackpadStatus
+else
+  xinput enable "SynPS/2 Synaptics TouchPad"
+  echo "on" > $HOME/.cache/trackpadStatus
+fi

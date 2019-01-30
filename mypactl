@@ -1,0 +1,25 @@
+#!/usr/bin/env dash
+
+muteStat=$(/usr/bin/pulseaudio-ctl full-status | cut -d " " -f2)
+
+if [ -z "$1" ] && [ -z "$2" ]
+then
+  echo "Pass up/down and percentage"
+  exit 1
+fi
+
+if [ "$1" = "up" ]
+then
+  if [ "$muteStat" = "yes" ]
+  then
+    /usr/bin/pulseaudio-ctl mute
+  fi
+  /usr/bin/pulseaudio-ctl up $2
+elif [ "$1" = "down" ]
+then
+  if [ "$muteStat" = "yes" ]
+  then
+    /usr/bin/pulseaudio-ctl mute
+  fi
+  /usr/bin/pulseaudio-ctl down $2
+fi

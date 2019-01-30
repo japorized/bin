@@ -32,7 +32,9 @@ function reset_background
         if [[ -f "$COVER" ]] ; then
             # printf "\e]11;0:${background}\a"
             # printf "\e]708;0:${background}\a"
-            printf "\e]20;${COVER};30x30+5+50:op=keep-aspect\a"
+            # printf "\e]20;${COVER};30x30+5+50:op=keep-aspect\a"
+            # kitty +kitten icat --align left --place 30x30@5x50 $COVER
+            echo $COVER
         else
             reset_background
         fi

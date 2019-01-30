@@ -12,7 +12,7 @@ then
 fi
 
 runtabbed() {
-	tabbed -dcn tabbed-zathura -p +1 -r 2 zathura -e '' "$uri" >"$xidfile" \
+	tabbed -dcn tabbed-zathura -p +1 -r 2 zathura -e '' "$uri" > "$xidfile" \
 		2>/dev/null &
 }
 

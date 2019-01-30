@@ -1,4 +1,9 @@
-#!/usr/bin/env dash
+#!/usr/bin/env bash
+
+if [ -z $1 ]; then
+  echo "Please pass argument: e (simple ss), se (selection ss), ue (window ss)"
+  exit 1
+fi
 
 datetime=$(date "+%Y-%m-%d-%H%M%S")
 
@@ -14,10 +19,18 @@ case $1 in
     ;;
 esac
 
-/usr/bin/convert $HOME/Pictures/$datetime.png -resize x300 $HOME/tmp/lastscrot.png
+sleep 0.5
+resolution="$(xrandr --nograb --current | awk '/\*/ {printf $1; exit}')"
+monitor_width="${resolution/x*}"
+monitor_height="${resolution#*x}"
+preview_width="$((monitor_width  / 5))"
+preview_height="$((monitor_height  / 5))"
+offset_x="$((monitor_width - preview_width))"
+offset_y="$((monitor_height - preview_height))"
+/usr/bin/convert $HOME/Pictures/$datetime.png -resize "${preview_width}x${preview_height}" $HOME/tmp/lastscrot.png
 
 # Display scrot for preview
-~/.bin/n30f -x 2050 -y 1270 $HOME/tmp/lastscrot.png -c "/usr/bin/gimp $HOME/Pictures/$datetime.png" &
+~/.bin/n30f -x $offset_x -y $offset_y $HOME/tmp/lastscrot.png -c "/usr/bin/gimp $HOME/Pictures/$datetime.png" &
 scrotpid=$!
 
 ~/.config/lemonbar/scrot-notification.sh

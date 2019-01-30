@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+bspc node -t floating
+
+resolution="$(xrandr --nograb --current | awk '/\*/ {printf $1; exit}')"
+monitor_width="${resolution/x*}"
+monitor_height="${resolution#*x}"
+wanted_width="$((monitor_width / 5))"
+wanted_height="$((monitor_height / 5))"
+cur_width="$(returnWindowInfo.sh w)"
+cur_height="$(returnWindowInfo.sh h)"
+diff_width="$(( cur_width - wanted_width ))"
+diff_height="$(( cur_height - wanted_height ))"
+
+echo $diff_width
+
+bspc node -z bottom_right "-$diff_width" "-$diff_height"
+bspc node -g sticky
+
+~/.bin/bspc-smartmove bottom-right
