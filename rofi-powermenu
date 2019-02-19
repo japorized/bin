@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+_rofi() {
+  rofi -sep '|' -columns 6 -lines 1 -disable-history true -cycle true \
+    -theme ~/.config/rofi/theme/rofi-simplemenu.rasi -width 80 -height 200 \
+    -dmenu -font "Hack 40"
+}
+
+choice=$(echo "|||||" | _rofi)
+
+case "$choice" in
+  )
+    slock
+    ;;
+  )
+    ~/.bin/displaysleep
+    ;;
+  )
+    systemctl suspend
+    ;;
+  )
+    cleandesktop.sh
+    bspc quit
+    ;;
+  )
+    systemctl reboot
+    ;;
+  )
+    systemctl poweroff
+    ;;
+esac

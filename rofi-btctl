@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+# cmds=($(bluetoothctl help | cut -d' ' -f1 | sed 's/[\x01-\x1F\x7F]//g' | sed 's/\[[0-9];[0-9]\+m//g'))
+# unset "cmds[2]"
+# unset "cmds[1]"
+# unset "cmds[0]"
+cmds=(list devices power connect disconnect)
+
+case $1 in
+  h|help|-h|--help)
+    echo `This is a simple rofi script to connect to trusted devices.`
+    exit 0
+    ;;
+esac
+
+_rofi() {
+  if [ -n "$1" ] ; then
+    rofi -dmenu -i -p "rofi-btctl" -mesg "$1"
+  else
+    rofi -dmenu -i -p "rofi-btctl"
+  fi
+}
+
+choice=$(printf '%s\n' "${cmds[@]}" | _rofi)
+
+case "$choice" in
+  list|devices)
+    bluetoothctl ${choice} | _rofi "bluetoothctl $choice"
+    ;;
+  connect|disconnect)
+    device=$(bluetoothctl devices | _rofi "bluetoothctl list")
+    device=$(echo $device | cut -d' ' -f2)
+    bluetoothctl ${choice} ${device} && notify-send "Bluetoothctl" "${choice}ed from ${device}"
+    ;;
+  power)
+    onoff=(on off)
+    ans=$(printf '%s\n' "${onoff[@]}" | _rofi "bluetoothctl power")
+    bluetoothctl power ${ans} && notify-send "Bluetoothctl" "Power $ans"
+    ;;
+  *)
+esac

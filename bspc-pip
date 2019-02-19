@@ -1,20 +1,36 @@
 #!/usr/bin/env bash
 
-bspc node -t floating
+bspc query -N focused.tiled -d focused > /dev/null
 
-resolution="$(xrandr --nograb --current | awk '/\*/ {printf $1; exit}')"
-monitor_width="${resolution/x*}"
-monitor_height="${resolution#*x}"
-wanted_width="$((monitor_width / 5))"
-wanted_height="$((monitor_height / 5))"
-cur_width="$(returnWindowInfo.sh w)"
-cur_height="$(returnWindowInfo.sh h)"
-diff_width="$(( cur_width - wanted_width ))"
-diff_height="$(( cur_height - wanted_height ))"
+if [ $? -eq 0 ]; then
+  window_state="tiled"
+else
+  window_state="floating"
+fi
 
-echo $diff_width
+if [ "$window_state" = "tiled" ]; then
+  bspc node -t floating
+  bspc node -g sticky
+  
+  resolution="$(xrandr --nograb --current | awk '/\*/ {printf $1; exit}')"
+  monitor_width="${resolution/x*}"
+  monitor_height="${resolution#*x}"
+  wanted_width="$((monitor_width / 5))"
+  wanted_height="$((monitor_height / 5))"
+  cur_width="$(returnWindowInfo.sh w)"
+  cur_height="$(returnWindowInfo.sh h)"
+  diff_width="$(( cur_width - wanted_width ))"
+  diff_height="$(( cur_height - wanted_height ))"
 
-bspc node -z bottom_right "-$diff_width" "-$diff_height"
-bspc node -g sticky
+  bspc node -z bottom_right "-$diff_width" "-$diff_height"
+  
+  ~/.bin/bspc-smartmove bottom-right
+else
+  bspc node -t tiled
 
-~/.bin/bspc-smartmove bottom-right
+  bspc query -N focused.sticky -d focused > /dev/null
+
+  if [ $? -eq 0 ]; then
+    bspc node -g sticky
+  fi
+fi

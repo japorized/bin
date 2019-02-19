@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ -z $1 ]; then
-  echo "Please pass argument: e (simple ss), se (selection ss), ue (window ss)"
+  echo "Please pass argument: e (simple), se (selection), ue (window), de (delayed, window)"
   exit 1
 fi
 
@@ -16,6 +16,10 @@ case $1 in
     ;;
   "ue")
     scrot $datetime.png -ue 'mv $f ~/Pictures/'
+    ;;
+  "de")
+    delay=$2
+    scrot $datetime.png -d ${delay} -e 'mv $f ~/Pictures/'
     ;;
 esac
 

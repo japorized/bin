@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+_rofi() {
+  rofi -sep '|' -columns 8 -lines 1 -disable-history true -cycle true \
+    -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 550 -height 20 \
+    -dmenu -font "Hack Nerd Font 10"
+}
+
+choice=$(echo "||||凌||綾|" | _rofi)
+
+case "$choice" in
+  )
+    mpc cdprev
+    ;;
+  )
+    mpc toggle
+    ;;
+  )
+    mpc next
+    ;;
+  )
+    mpc repeat
+    ;;
+  凌)
+    mpc random
+    ;;
+  )
+    cross=$(echo "0|1|5|7|10|15" | _rofi)
+    mpc crossfade ${cross}
+    ;;
+  綾)
+    mpc single
+    ;;
+  )
+    mpc consume
+    ;;
+esac

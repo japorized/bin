@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+wpgc=$(which wpg)
+
+if [ -z $wpgc ]; then
+  echo "wpg not found in path. Make sure that wpgtk is installed wpg is in your path."
+  exit 1
+fi
+
+choice=$(${wpgc} -l | rofi -dmenu -i -p "wpgtk")
+
+if [ "$choice" != "" ]; then
+  ${wpgc} -s ${choice}
+fi

@@ -22,8 +22,13 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 * `refresh-tint2.sh` - `tint2`
 * `returnWindowInfo.sh` - `xorg-xwininfo, xdotool`
 * `RNGesus` - `[none]`
+* `rofi-btctl` - `rofi, bluetoothctl`
+* `rofi-mpc` - `rofi, mpc`
+* `rofi-powermenu` - `rofi, slock, displaysleep, cleandesktop.sh, bspwm`
+* `rofi-scrot` - `rofi, ss-with-preview.sh`
 * `rofiawesome` - `rofi` (credits to [wstam/rofi-fontawesome](https://github.com/wstam88/rofi-fontawesome))
 * `rofimoji` - `rofi`
+* `rofiwpg` - `rofi, wpgtk`
 * `screenkey` - `python, screenkey`
 * `show-song-cover.sh` - `mpd, mpc, imagemagick`
 * `song-change-notify.sh` - `libnotify, mpc`

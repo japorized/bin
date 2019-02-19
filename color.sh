@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 # sysinfo script
 
+. "${HOME}/.cache/wpgtk.color"
+
 rst="\e[0m"
 blk="\e[1;30m"
 red="\e[1;31m"
@@ -29,7 +31,7 @@ echo -e
 echo -e " ─────────────────────────────────────────────────────────────────────────────"
 echo -e "   BLK       RED       GRN       YEL       BLU       MGT       CYN       WHT  "
 echo -e " ─────────────────────────────────────────────────────────────────────────────"
-echo -e " ${blk}#e4e4e4   ${red}#6363a5   ${grn}#633e63   ${ylw}#504754   ${blu}#3e3e3e   ${mgt}#6b6b6b   ${cyn}#5c5085   ${wht}#7c7c7c${rst}"
-echo -e " ${dblk}#a4a4a4   ${dred}#323275   ${dgrn}#472247   ${dylw}#3f3046   ${dblu}#262626   ${dmgt}#545454   ${dcyn}#413569   ${dwht}#000000${rst}"
+echo -e " ${blk}${color0}   ${red}${color1}   ${grn}${color2}   ${ylw}${color3}   ${blu}${color4}   ${mgt}${color5}   ${cyn}${color6}   ${wht}${color7}${rst}"
+echo -e " ${blk}${color8}   ${dred}${color9}   ${dgrn}${color10}   ${dylw}${color11}   ${dblu}${color12}   ${dmgt}${color13}   ${dcyn}${color14}   ${dwht}${color15}${rst}"
 echo -e " ${blk}███████   ${red}███████   ${grn}███████   ${ylw}███████   ${blu}███████   ${mgt}███████   ${cyn}███████   ${wht}███████${rst}"
 echo -e " ${dblk}███████   ${dred}███████   ${dgrn}███████   ${dylw}███████   ${dblu}███████   ${dmgt}███████   ${dcyn}███████   ${dwht}███████${rst}"
