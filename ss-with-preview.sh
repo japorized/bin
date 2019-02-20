@@ -34,7 +34,7 @@ offset_y="$((monitor_height - preview_height))"
 /usr/bin/convert $HOME/Pictures/$datetime.png -resize "${preview_width}x${preview_height}" $HOME/tmp/lastscrot.png
 
 # Display scrot for preview
-~/.bin/n30f -x $offset_x -y $offset_y $HOME/tmp/lastscrot.png -c "/usr/bin/gimp $HOME/Pictures/$datetime.png" &
+~/.bin/n30f -bi -x $offset_x $HOME/tmp/lastscrot.png -c "/usr/bin/gimp $HOME/Pictures/$datetime.png" &
 scrotpid=$!
 
 ~/.config/lemonbar/scrot-notification.sh
