@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-bspc query -N focused.tiled -d focused > /dev/null
+# Check for tiling status
+bspc query -N -n focused.tiled > /dev/null
 
 if [ $? -eq 0 ]; then
   window_state="tiled"
@@ -8,9 +9,17 @@ else
   window_state="floating"
 fi
 
-if [ "$window_state" = "tiled" ]; then
-  bspc node -t floating
-  bspc node -g sticky
+# Check for sticky status
+bspc query -N -n focused.sticky > /dev/null
+
+if [ $? -eq 0 ]; then
+  sticky_state="sticky"
+else
+  sticky_state="not-sticky"
+fi
+
+if [ "$window_state" = "tiled" ] || [ "$sticky_state" = "sticky" ]; then
+  bspc node -t floating -g sticky=on -l above
   
   resolution="$(xrandr --nograb --current | awk '/\*/ {printf $1; exit}')"
   monitor_width="${resolution/x*}"
@@ -26,11 +35,5 @@ if [ "$window_state" = "tiled" ]; then
   
   ~/.bin/bspc-smartmove bottom-right
 else
-  bspc node -t tiled
-
-  bspc query -N focused.sticky -d focused > /dev/null
-
-  if [ $? -eq 0 ]; then
-    bspc node -g sticky
-  fi
+  bspc node -t ~floating -g sticky=off -l normal
 fi

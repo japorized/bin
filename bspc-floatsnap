@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+# check if window is tiled
+# program exits if window is tiled
+bspc query -N focused.tiled -d focused > /dev/null
+
+if [ $? -eq 0 ]; then
+  exit 0
+fi
+
+bspcsm=$HOME/.bin/bspc-smartmove
+rofioptions="-columns 3 -lines 3"
+
+_rofi() {
+  rofi -theme $HOME/.config/rofi/theme/rofi-simplemenu.rasi \
+    -sep '|' ${rofioptions} -dmenu -i -p "snap to" -mesg "snap window to" \
+    -kb-custom-1 "q" -kb-custom-2 "w" -kb-custom-3 "e" -kb-custom-4 "a" -kb-custom-5 "s" \
+    -kb-custom-6 "d" -kb-custom-7 "z" -kb-custom-8 "x" -kb-custom-9 "c"
+}
+
+choice=$(echo "q|a|z|w|s|x|e|d|c" | _rofi)
+choice=$?
+
+case $choice in
+  q|10)
+    $bspcsm top-left
+    ;;
+  w|11)
+    $bspcsm top-center
+    ;;
+  e|12)
+    $bspcsm top-right
+    ;;
+  a|13)
+    $bspcsm left-center
+    ;;
+  s|14)
+    $bspcsm center
+    ;;
+  d|15)
+    $bspcsm right-center
+    ;;
+  z|16)
+    $bspcsm bottom-left
+    ;;
+  x|17)
+    $bspcsm bottom-center
+    ;;
+  c|18)
+    $bspcsm bottom-right
+    ;;
+  *)
+    ;;
+esac

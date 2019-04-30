@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-# sysinfo script
 
 . "${HOME}/.cache/wpgtk.color"
 

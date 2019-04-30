@@ -1,0 +1,138 @@
+#!/usr/bin/env bash
+# This is just a very simple and naive interface to netctl
+# It works for what I need for now
+# It is desirable to be able to manage netctl-auto via systemd w/o rp
+# See https://wiki.archlinux.org/index.php/Polkit#Allow_management_of_individual_systemd_units_by_regular_users
+# This scripts requires the above to be implemented
+
+# config
+rofioption="-lines 10 -yoffset -20"
+terminal="/usr/bin/termite"
+interface="wlp5s0"
+
+_rofi() {
+  rofi ${rofioption} -dmenu -i -p "rofi-netctl" "$@"
+}
+
+switch() {
+  IFS=$'\n'
+  networks=($(netctl-auto list | tr -d "\*" | tr -d "\ "))
+  unset IFS
+
+  list=""
+  for network in "${networks[@]}"; do
+    if [ -z "$list" ]; then
+      list=${network}
+    else
+      list="${list}|${network}"
+    fi
+  done
+
+  choice=$(echo $list | _rofi -sep "|" -mesg "Switch network to:")
+  if [ -n "$choice" ]; then
+    resp=$(netctl-auto switch-to "${choice}")
+    if [ -n "$resp" ]; then
+      echo $resp | rofi -e
+    fi
+  fi
+}
+
+profilemgr() {
+  IFS=$'\n'
+  networks=($(netctl-auto list | tr -d "\*" | tr -d "\ "))
+  unset IFS
+
+  list=""
+  for network in "${networks[@]}"; do
+    if [ -z "$list" ]; then
+      list=${network}
+    else
+      list="${list}|${network}"
+    fi
+  done
+
+  choice=$(echo $list | _rofi -sep "|" -mesg "${1} profile")
+  if [ -n "$choice" ]; then
+    resp=$(netctl-auto ${1} "${choice}")
+  fi
+}
+
+editprofile() {
+  IFS=$'\n'
+  networks=($(netctl list | tr -d "\*" | tr -d "\ "))
+  unset IFS
+
+  list=""
+  for network in "${networks[@]}"; do
+    if [ -z "$list" ]; then
+      list=${network}
+    else
+      list="${list}|${network}"
+    fi
+  done
+
+  choice=$(echo $list | _rofi -sep "|" -mesg "edit profile")
+  if [ -n "$choice" ]; then
+    ${terminal} -e "sudo ${EDITOR} /etc/netctl/${choice}"
+  fi
+}
+
+addnetwork() {
+  IFS=$'\n'
+  samples=($(ls /etc/netctl/examples | sed 's/:.*//'))
+  unset IFS
+
+  list="use wifi-menu"
+  for network in "${samples[@]}"; do
+    list="${list}|${network}"
+  done
+
+  choice=$(echo $list | _rofi -sep "|" -mesg "add profile")
+  if [ -n "$choice" ]; then
+    if [ "$choice" = "use wifi-menu" ]; then
+      ${terminal} -e "sudo wifi-menu"
+    else
+      profilename=$(_rofi -mesg "Give a profile name")
+      if [ -n "$profilename" ]; then
+        ${terminal} -e "sudo cp /etc/netctl/examples/${choice} /etc/netctl/${profilename} && echo 'copied' && sleep 5 && sudo ${EDITOR} /etc/netctl/${profilename}" 
+      else
+        _rofi -e "You must give a profile name"
+      fi
+    fi
+  fi
+}
+
+servicecontrol() {
+  servcontopt="restart service|start service|stop service"
+  servcont=$(echo $servcontopt | _rofi -sep "|")
+  case $servcont in
+    "restart service")
+      systemctl restart netctl-auto@${interface}.service && \
+      notify-send "netctl-auto" "connection service restarted"
+      ;;
+    "start service")
+      systemctl start netctl-auto@${interface}.service && \
+      notify-send "netctl-auto" "connection service started"
+      ;;
+    "stop service")
+      systemctl stop netctl-auto@${interface}.service && \
+      notify-send "netctl-auto" "connection service stopped"
+      ;;
+  esac
+}
+
+main() {
+  mainmenu="switch network|enable profile|disable profile|edit profile|add network|service control"
+  choice=$(echo $mainmenu | _rofi -sep "|")
+
+  case $choice in
+    "switch network") switch ;;
+    "enable profile") profilemgr enable ;;
+    "disable profile") profilemgr disable ;;
+    "edit profile") editprofile ;;
+    "add network") addnetwork ;;
+    "service control") servicecontrol ;;
+  esac
+}
+
+main

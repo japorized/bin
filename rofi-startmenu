@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+# config
+rofi_mainfont="EBGaramond 20"
+rofi_greeting="Greetings, Japorized!"
+
+_rofi() {
+  rofi -sep '|' -columns 5 -lines 2 -disable-history true -cycle true \
+    -theme ~/.config/rofi/theme/rofi-simplemenu.rasi -width 80 -height 200 \
+    -dmenu -font "${rofi_mainfont}" -mesg "<span face='ClearSans' font_size='x-large' weight='bold'>${rofi_greeting}</span>"
+}
+
+choice=$(echo "\
+ termite| thunar| geary| firefox| nvim-qt| steam| telegram| rofiwpg|ア rofianime| zathura| obs| flowblade\
+" | _rofi)
+
+case "$choice" in
+  " termite")
+    termite
+    ;;
+  " thunar")
+    thunar ~
+    ;;
+  " geary")
+    geary
+    ;;
+  " firefox")
+    firefox
+    ;;
+  " nvim-qt")
+    nvim-qt
+    ;;
+  " steam")
+    steam
+    ;;
+  " telegram")
+    web-telegram
+    ;;
+  " rofiwpg")
+    rofiwpg
+    ;;
+  "ア rofianime")
+    rofianime
+    ;;
+  " zathura")
+    tabbed-zathura
+    ;;
+  " obs")
+    obs
+    ;;
+  " flowblade")
+    flowblade
+    ;;
+esac

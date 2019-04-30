@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# This is my very unclean attempt to index nerdfonts and make something
+# similar to rofiawesome
+
+data=$XDG_DATA_HOME/rofi-nerdfonts
+src=$data/fonts
+dump=$data/nerd-fonts-dump
+
+rofioptions="-columns 5 -lines 10"
+
+_rofi() {
+  rofi -dmenu -i ${rofioptions} -p "nerdfonts" "$@"
+}
+
+fontdump() {
+  if [ ! -d "$data" ]; then
+    mkdir $data
+  fi
+  if [ ! -f "$dump" ]; then
+    touch $dump
+  fi
+  prefixes=(e f)
+  hexes=(1 2 3 4 5 6 7 8 9 0 a b c d e f)
+  results=''
+  
+  for prefix in "${prefixes[@]}"; do
+    for a in "${hexes[@]}"; do
+    for b in "${hexes[@]}"; do
+    for c in "${hexes[@]}"; do
+      echo -e "\u${prefix}${a}${b}${c}" >> $dump
+    done
+    done
+    done
+  done
+}
+
+main() {
+  glyphs=$(cat $src | tr '\n' '|')
+  action=$(echo $glyphs . "|dump fonts" | _rofi -sep "|")
+  if [ "$action" = "dump fonts" ]; then
+    fontdump
+  else
+    echo -en "$action" | xclip -selection clipboard
+  fi
+}
+
+main

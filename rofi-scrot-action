@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+_rofi() {
+  rofi -sep '|' -columns 4 -lines 1 -disable-history true -cycle true \
+    -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 280 -height 20 \
+    -dmenu -font "Hack Nerd Font 10" -mesg "what to do"
+}
+
+choice=$(echo "|||" | _rofi)
+
+case "$choice" in
+  )
+    /usr/bin/gimp "$1/$2"
+    ;;
+  )
+    /usr/bin/feh "$1/$2"
+    ;;
+  )
+    /usr/bin/thunar "$1"
+    ;;
+  )
+    dest=$(/usr/bin/zenity --file-selection --save --confirm-overwrite)
+    mv "$1/$2" "$dest"
+    ;;
+esac

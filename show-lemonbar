@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+
+lemonbars=$HOME/.config/lemonbar
+
+start() {
+  ${lemonbars}/"$@".sh &
+}
+
+for lemon in "${@}"; do
+  start "${lemon}"
+done
+sleep 5
+kill 0
+exit 0

@@ -1,14 +1,80 @@
 #!/usr/bin/env bash
 
 wpgc=$(which wpg)
+editor=$(which nvim-qt)
 
 if [ -z $wpgc ]; then
   echo "wpg not found in path. Make sure that wpgtk is installed wpg is in your path."
   exit 1
 fi
 
-choice=$(${wpgc} -l | rofi -dmenu -i -p "wpgtk")
+wpgcfgpath="$HOME/.config/wpg"
+wpgprompt="  wpgtk"
+template="Alt+t"
+schemes="Alt+s"
+config="Alt+c"
+delete="Alt+d"
+highlightcolor="Aqua"
 
-if [ "$choice" != "" ]; then
-  ${wpgc} -s ${choice}
-fi
+. "$HOME/.config/rofi/script-configs/rofiwpg.conf"
+
+helpmsg="Actions:
+<span color='${highlightcolor}'>(Alt+t)</span> edit templates | <span color='${highlightcolor}'>(Alt+s)</span> edit schemes
+<span color='${highlightcolor}'>(Alt+c)</span> edit config | <span color='${highlightcolor}'>(Alt+d)</span> delete theme"
+
+_rofi() {
+  rofi -dmenu -markup-rows -i -p "${wpgprompt}" "$@"
+}
+
+edittemplate() {
+  choice=$(${wpgc} -lt | _rofi)
+
+  if [ -n "$choice" ]; then
+    ${editor} ${wpgcfgpath}/templates/${choice}
+  fi
+}
+
+editschemes() {
+  choice=$(ls ${wpgcfgpath}/schemes | _rofi)
+
+  if [ -n "$choice" ]; then
+    ${editor} ${wpgcfgpath}/schemes/${choice}
+  fi
+}
+
+themechanger() {
+  choice=$(${wpgc} -l | _rofi -mesg "${helpmsg}" -kb-custom-1 "${template}" -kb-custom-2 "${schemes}" -kb-custom-3 "${config}" -kb-custom-4 "${delete}")
+  val=$?
+  
+  if [ $val -eq 0 ]; then
+    echo ${choice}
+  else
+    echo $val
+  fi
+}
+
+deletetheme() {
+  choice=$(${wpgc} -l | _rofi -mesg "Which theme to delete?")
+  confirm=$(echo "No|Yes" | _rofi -sep '|' -mesg "Really delete ${choice}?")
+  if [ "$confirm" = "Yes" ]; then
+    ${wpgc} -d ${choice}
+    rofi -e "${choice} theme deleted"
+  fi
+}
+
+main() {
+  ret=$(themechanger)
+  if [ "$ret" = "10" ]; then
+    edittemplate
+  elif [ "$ret" = "11" ]; then
+    editschemes
+  elif [ "$ret" = "12" ]; then
+    ${editor} ${wpgcfgpath}/wpg.conf
+  elif [ "$ret" = "13" ]; then
+    deletetheme
+  else
+    ${wpgc} -s ${ret}
+  fi
+}
+
+main

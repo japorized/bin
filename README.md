@@ -16,20 +16,26 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 * `move-lemonbar-to-back.sh` - `xdotool`
 * `mv-mybin-to-repo.sh` - `[none]`
 * `mypactl` - `pulseaudio-ctl`
-* `new-classnote` - `nvim`
-* `new-assignment` - `nvim `
 * `refresh-indicators.sh` - `lemonbar`
 * `refresh-tint2.sh` - `tint2`
 * `returnWindowInfo.sh` - `xorg-xwininfo, xdotool`
 * `RNGesus` - `[none]`
 * `rofi-btctl` - `rofi, bluetoothctl`
+* `rofi-lemon` - `rofi, show-lemonbar`
+* `rofimoji`
 * `rofi-mpc` - `rofi, mpc`
+* `rofi-nerdfonts` - `rofi`
+* `rofi-netctl` - `rofi, netctl`
 * `rofi-powermenu` - `rofi, slock, displaysleep, cleandesktop.sh, bspwm`
 * `rofi-scrot` - `rofi, ss-with-preview.sh`
+* `rofi-scrot-action` - `rofi, zenity`
+* `rofi-startmenu` - `rofi`
+* `rofianime` - `rofi`
 * `rofiawesome` - `rofi` (credits to [wstam/rofi-fontawesome](https://github.com/wstam88/rofi-fontawesome))
 * `rofimoji` - `rofi`
 * `rofiwpg` - `rofi, wpgtk`
 * `screenkey` - `python, screenkey`
+* `show-lemonbar` - `lemonbar`
 * `show-song-cover.sh` - `mpd, mpc, imagemagick`
 * `song-change-notify.sh` - `libnotify, mpc`
 * `ss-with-preview.sh` - `imagemagick, n30f, lemonbar, scrot, gimp`

@@ -3,10 +3,10 @@
 _rofi() {
   rofi -sep '|' -columns 6 -lines 1 -disable-history true -cycle true \
     -theme ~/.config/rofi/theme/rofi-simplemenu.rasi -width 80 -height 200 \
-    -dmenu -font "Hack 40"
+    -dmenu -font "Hack 40" "$@"
 }
 
-choice=$(echo "|||||" | _rofi)
+choice=$(echo "|||||" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Goodbye, Japorized!</span>")
 
 case "$choice" in
   )
@@ -19,13 +19,22 @@ case "$choice" in
     systemctl suspend
     ;;
   )
-    cleandesktop.sh
-    bspc quit
+    choice=$(echo "No|Yes" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Logging out. Are you sure?</span>")
+    if [ "$choice" = "Yes" ]; then
+      cleandesktop.sh
+      bspc quit
+    fi
     ;;
   )
-    systemctl reboot
+    choice=$(echo "No|Yes" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Rebooting. Are you sure?</span>")
+    if [ "$choice" = "Yes" ]; then
+      systemctl reboot
+    fi
     ;;
   )
-    systemctl poweroff
+    choice=$(echo "No|Yes" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Powering off. Are you sure?</span>")
+    if [ "$choice" = "Yes" ]; then
+      systemctl poweroff
+    fi
     ;;
 esac

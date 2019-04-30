@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+
+# config
+downloaddir=$HOME/Downloads/builds
+rofioption="-lines 10 -yoffset -20 -width 80"
+
+_rofi() {
+  rofi ${rofioption} -dmenu -i -p "rofi-auracle" "$@"
+}
+
+build() {
+  IFS=$'\n'
+  buildsarr=($(ls $downloaddir | sed 's/:.*//'))
+  unset IFS
+  
+  buildlist=""
+  for build in "${buildsarr[@]}"
+  do
+    if [ -z "$buildlist" ]; then
+      buildlist="${build}"
+    else
+      buildlist="$buildlist|${build}"
+    fi
+  done
+  
+  build=$(echo $buildlist | _rofi -sep "|")
+  if [ -n "$build" ]; then
+    cd $downloaddir/$build
+    termite -d $downloaddir/$build -e "nvim PKGBUILD"
+    confirm=$(echo "Yes|No" | _rofi -sep "|" -mesg "Build $build?")
+    if [ "$confirm" = "Yes" ]; then
+      termite -d $downloaddir/$build -e "makepkg -si" --hold && \
+        notify-send "rofi-auracle" "Build complete for $build."
+    fi
+  fi
+}
+
+clean() {
+  IFS=$'\n'
+  buildsarr=($(ls $downloaddir | sed 's/:.*//'))
+  unset IFS
+  
+  buildlist="all"
+  for build in "${buildsarr[@]}"
+  do
+    buildlist="$buildlist|${build}"
+  done
+  
+  build=$(echo $buildlist | _rofi -multi-select -sep "|")
+  val=$?
+  if [ "$val" != "-1" ]; then
+    confirm=$(echo "No|Yes" | _rofi -sep "|" -mesg "Removing ($build). Are you sure?")
+    if [ "$confirm" = "No" ]; then
+      exit 0
+    fi
+    if [ "$build" = "all" ]; then
+      rm -drf $downloaddir/* && notify-send "rofi-auracle" "Cleaned."
+    else
+      for dir in ${build[@]}; do
+        rm -drf $downloaddir/$dir
+      done && notify-send "rofi-auracle" "Deleted\n${build[@]}"
+    fi
+  fi
+}
+
+download() {
+  if [ "$1" != "" ]; then
+    pkgs=$(echo "$@" | tr ' ' '\n')
+    auracle download -r -C $downloaddir "$@" && \
+      notify-send "rofi-auracle" "Downloaded:\n$pkgs"
+  fi
+}
+
+search() {
+  query=$(_rofi)
+  if [ "$query" = "" ]; then
+    exit 0
+  fi
+
+  selection=$(auracle search --sort=popularity "$query" -F $'{name}: {description}' | _rofi)
+
+  if [ "$selection" != "" ]; then
+    package=$(echo "$selection" | cut -d : -f1)
+    description=$(echo "$selection" | cut -d : -f2)
+
+    if [ "$1" = "download" ]; then
+      infomsg="  Package     : $package
+  Description :$description
+  Download?"
+
+      confirm=$(echo "Yes|No" | _rofi -sep '|' -mesg "$infomsg")
+
+      if [ "$confirm" = "Yes" ]; then
+        download $package
+      fi
+    elif [ "$1" = "info" ]; then
+      auracle info "$package" | _rofi
+    fi
+  fi
+}
+
+sync() {
+  upgradehelp="<b>Shift+Enter</b> to multi-select"
+  choices=($(auracle sync -q | _rofi -multi-select -mesg "$upgradehelp"))
+  if [ "$choices" != "" ]; then
+    download "${choices[@]}"
+  fi
+}
+
+main() {
+  if [ ! -d "$downloaddir" ]; then
+    echo "Please set \$downloaddir"
+    exit 1
+  fi
+  mainmenu="search|sync|build|clean|info|goto build dir"
+  entrance=$(echo $mainmenu | _rofi -sep '|')
+  case $entrance in
+    "search")
+      search download
+      ;;
+    "sync")
+      sync
+      ;;
+    "build")
+      build
+      ;;
+    "clean")
+      clean
+      ;;
+    "info")
+      search info
+      ;;
+    "goto build dir")
+      termite -d $downloaddir
+      ;;
+  esac
+}
+
+main

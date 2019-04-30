@@ -10,6 +10,7 @@ choice=$(echo "|濾|类|" | _rofi)
 
 case "$choice" in
   )
+    sleep 0.5
     ~/.bin/ss-with-preview.sh e
     ;;
   濾)

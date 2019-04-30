@@ -8,9 +8,6 @@ cyn="\e[1;36m"
 dmgt="\e[0;35m"
 dcyn="\e[0;36m"
 
-action=$1
-arg=$2
-
 usage() {
 echo "             __ _                                              "
 echo "   __ ___   / _(_) __ ___      _____  ___  ___  _ __ ___   ___ "
@@ -18,39 +15,57 @@ echo " | '__/ _ \| |_| |/ _\` \ \ /\ / / _ \/ __|/ _ \| '_ \` _ \ / _ \ "
 echo " | | | (_) |  _| | (_| |\ V  V /  __/\__ \ (_) | | | | | |  __/"
 echo " |_|  \___/|_| |_|\__,_| \_/\_/ \___||___/\___/|_| |_| |_|\___|"
 echo ""
-echo -e "  ${mgt}Usage${rst}: rofiawesome <s|i|p|h|u> <fa4|fa5>
+echo -e "  ${mgt}Usage${rst}: rofiawesome [options]
 
   ${mgt}Options${rst}:
-    s (default)    copy icon escape character to clipboard
-    i              copy icon to clipboard
-    p              copy icon tag to clipboard
-    h              show this help message
-    u              update icon cache (location: $HOME/.cache/)
-    fa4 (default)  show FontAwesome4 icons
-    fa5            show FontAwesome5 icons"
+    -h        show this help message
+    [noarg]   copy icon escape character to clipboard (default)
+    -t        copy icon tag to clipboard
+              (mutually exclusive with i, takes precedence)
+    -i        copy icon to clipboard (mutually exclusive with t)
+    -u        update icon cache (location: $HOME/.cache/)
+    -f        show FontAwesome5 icons (defaults to FA4)"
 }
 
-case $action in
-  h)
-    usage
-    exit 0
-    ;;
-  ""|s|i|p|u) ;;
-  *)
-    usage
-    exit 1
-esac
+u_flag=false
+i_flag=false
+f_flag=false
+t_flag=false
+
+while getopts "hutif" flag; do
+  case "${flag}" in
+    h) usage
+      exit 0
+      ;;
+    u)
+      u_flag=true
+      break
+      ;;
+    t) t_flag=true ;;
+    i)
+      if [ "$t_flag" = false ]; then
+        i_flag=true
+      fi
+      ;;
+    f) f_flag=true ;;
+    *) usage
+      exit 1
+      ;;
+  esac
+done
 
 options='-columns 3 -width 80 -lines 20 -bw 2 -yoffset -2'
 
-if [ "$action" = "u" ]
-then
+if [ "$u_flag" = true ]; then
   curl -s https://raw.githubusercontent.com/wstam88/rofi-fontawesome/master/fa5-icon-list.txt > $HOME/.cache/fa5-icon-list.txt
   curl -s https://raw.githubusercontent.com/wstam88/rofi-fontawesome/master/icon-list.txt > $HOME/.cache/icon-list.txt
-elif [ "$arg" = "fa5" ]
-then
+  rofi -e "Icons cache updated"
+  exit 0
+fi
+
+if [ "$f_flag" = true ]; then
   icons_path=$HOME/.cache/fa5-icon-list.txt
-else # $arg falls through if it's not fa4
+else
   icons_path=$HOME/.cache/icon-list.txt
 fi
 
@@ -63,7 +78,7 @@ selected=$(\
 # exit if nothing is selected
 [[ -z $selected ]] && exit
 
-if [ ! "$action" = "p" ]
+if [ "$t_flag" = false ]
 then
   fa=$(echo -n "$selected" |\
     awk -F';' -v RS='>' '
@@ -73,8 +88,7 @@ else
   fa=$(echo -n "$selected" | cut -d\' -f2)
 fi
 
-if [ "$action" = "i" ]
-then
+if [ "$i_flag" = true ]; then
   echo -en "$fa" | xclip -selection clipboard
 else
   echo -n "$fa" | xclip -selection clipboard

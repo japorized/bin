@@ -6,32 +6,44 @@ _rofi() {
     -dmenu -font "Hack Nerd Font 10"
 }
 
-choice=$(echo "||||凌||綾|" | _rofi)
+inform() {
+  sleep 0.5
+  show-lemonbar nowplaying
+}
+
+choice=$(echo "||||凌||綾|||" | _rofi)
 
 case "$choice" in
   )
-    mpc cdprev
+    mpc cdprev && inform
     ;;
   )
-    mpc toggle
+    mpc toggle && inform
     ;;
   )
-    mpc next
+    mpc next && inform
+    ;;
+  )
+    vol=$(echo "100|75|50|25|+5|-5" | _rofi)
+    mpc volume ${vol}
     ;;
   )
-    mpc repeat
+    mpc repeat && inform
     ;;
   凌)
-    mpc random
+    mpc random && inform
+    ;;
+  綾)
+    mpc single && inform
     ;;
   )
     cross=$(echo "0|1|5|7|10|15" | _rofi)
     mpc crossfade ${cross}
     ;;
-  綾)
-    mpc single
-    ;;
   )
-    mpc consume
+    mpc consume && inform
+    ;;
+  )
+    systemctl --user restart mpd.service
     ;;
 esac
