@@ -6,7 +6,7 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 
 * `256colors` - `bash`
 * `animatebg` - `xwinwrap, mpv`
-* `backup-pkglist.sh - `pacman`
+* `backup-pkglist.sh` - `pacman`
 * `bspc-pip` - `bspwm, xrandr, bspc-smartmove`
 * `bspc-smartmove` - `bspwm, xrandr, bash, returnWindowInfo.sh`
 * `cleandekstop.sh` - `lemonbar`
