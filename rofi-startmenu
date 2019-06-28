@@ -11,7 +11,7 @@ _rofi() {
 }
 
 choice=$(echo "\
- termite| thunar| geary| firefox| nvim-qt| steam| telegram| rofiwpg|ア rofianime| zathura| obs| flowblade\
+ termite| thunar| geary| firefox| nvim-qt| steam| telegram| rofiwpg|ア rofianime| zathura| obs| flowblade| font viewer\
 " | _rofi)
 
 case "$choice" in
@@ -50,5 +50,8 @@ case "$choice" in
     ;;
   " flowblade")
     flowblade
+    ;;
+  " font viewer")
+    gnome-font-viewer
     ;;
 esac

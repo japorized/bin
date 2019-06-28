@@ -11,6 +11,7 @@
 rofiprompt="ア rofianime"
 animedir="$HOME/Videos/Anime"
 vidplayer="/usr/bin/mpv"
+filemanager="/usr/bin/thunar"
 fileext="(.mkv|.mp4|.webm)" # use regex (PCRE)
 renamers="HorribleSubs" # |-separated
 rofiopts=""
@@ -21,9 +22,10 @@ if [ ! -e $vidplayer ]; then
   exit 1
 fi
 
-# keybinds
+# keybindings
 goback="Alt+c"
 useRenamer="Alt+r"
+openInFM="Alt+t"
 
 # color(s)
 highlightcolor='Aqua'
@@ -87,9 +89,9 @@ getEpisode() {
   fi
 
   rofimsg="<i><b>Last Episode:</b> $lastepi</i>
-<span color='${highlightcolor}'>${goback}</span> to go back | <span color='${highlightcolor}'>${useRenamer}</span> to automagically rename certain files"
+<span color='${highlightcolor}'>${goback}</span> to go back | <span color='${highlightcolor}'>${useRenamer}</span> to automagically rename certain files | <span color='${highlightcolor}'>${openInFM}</span> open in file manager"
 
-  episode=$(echo $episodelist | _rofi -mesg "$rofimsg" ${dmenuopts} -kb-custom-1 "${goback}" -kb-custom-2 "${useRenamer}" )
+  episode=$(echo $episodelist | _rofi -mesg "$rofimsg" ${dmenuopts} -kb-custom-1 "${goback}" -kb-custom-2 "${useRenamer}" -kb-custom-3 "${openInFM}" )
 
   val=$?
   if [ $val -eq 10 ]; then
@@ -97,6 +99,8 @@ getEpisode() {
   elif [ $val -eq 11 ]; then
     renameChoice=$(echo "$renamers" | _rofi -mesg "Pick an option")
     _renamer "$renameChoice"
+  elif [ $val -eq 12 ]; then
+    ${filemanager} .
   elif [ $val -eq 1 ]; then
     exit 0
   else

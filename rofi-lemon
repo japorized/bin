@@ -6,14 +6,11 @@ _rofi() {
     -kb-custom-1 "s" -kb-custom-2 "w" -kb-custom-3 "W"
 }
 
-choice=$(echo "Status|Weather|Window status" | _rofi)
+choice=$(echo "Weather|Window status" | _rofi)
 val=$?
 
 if [ $val = 0 ]; then
   case $choice in
-    "Status"|10)
-      show-lemonbar status
-      ;;
     "Weather"|11)
       show-lemonbar weather
       ;;
@@ -25,9 +22,6 @@ if [ $val = 0 ]; then
   esac
 elif [ $val != 1 ]; then
   case $val in
-    "Status"|10)
-      show-lemonbar status
-      ;;
     "Weather"|11)
       show-lemonbar weather
       ;;

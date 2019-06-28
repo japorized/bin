@@ -1,11 +1,31 @@
 #!/usr/bin/env dash
 
-loopingvid=$1
+vidfile=$1
+pidfile=$HOME/.cache/animatebg.pid
 
-if [ -z $loopingvid ]
+killvid() {
+  for l in $(cat $pidfile)
+  do
+    pkill -P $l
+    kill -s TERM $l
+  done
+  rm $pidfile
+}
+
+if [ -z $vidfile ]
 then
-  loopingvid=~/Videos/xwinwraps/koi_pond.mp4
+  echo "No video/GIF file provided."
+  exit 1
+elif [ ! "$vidfile" = "kill" ]
+then
+  killvid
+  
+  /usr/bin/xwinwrap -b -fs -sp -fs -ov -ni -nf -- \
+    /usr/bin/mpv -wid WID --no-config --keepaspect=no --loop \
+      --no-border --vd-lavc-fast --x11-bypass-compositor=no \
+      --aid=no --vo=xv --hwdec=auto --really-quiet $vidfile &
+  
+  echo $! > $pidfile
+else
+  killvid
 fi
-
-/usr/bin/xwinwrap -b -fs -sp -fs -ov -ni -nf -- /usr/bin/mpv -wid WID --no-config --keepaspect=no --loop --no-border --vd-lavc-fast --x11-bypass-compositor=no --aid=no --vo=xv --hwdec=auto --really-quiet $loopingvid
-# /usr/bin/xwinwrap -b -fs -sp -fs -ov -ni -nf -- /usr/bin/gifview -w WID ~/Pictures/Wallpapers/town_rain.gif -a
