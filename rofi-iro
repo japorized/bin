@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
 
 _rofi() {
-  rofi -sep '|' -columns 5 -lines 1 -disable-history true -cycle true \
-    -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 500 -height 20 \
-    -dmenu -font "Hack Nerd Font 10" -mesg "rofi-iro"
+  rofi -sep '|' -columns 8 -lines 1 -disable-history true -cycle true \
+    -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 1000 -height 20 \
+    -dmenu -font "Hack Nerd Font 10" -mesg " iro"
 }
 
-choice=$(echo -n "hex|rgb|clean|kill|clear" | _rofi)
+choice=$(echo -en "hex |rgb |hex |rgb |hex |rgb |clear|clean" | _rofi)
 retval=$?
 if [ $retval != "1" ]; then
-  iro "${choice}"
+  case "$choice" in
+    "clear" | "clean") iro "$choice" ;;
+    "hex " | "rgb ") iro "$(echo $choice | cut -d' ' -f1)" ;;
+    "hex " | "rgb ") iro -c "$(echo $choice | cut -d' ' -f1)" ;;
+    "hex " | "rgb ") iro -n "$(echo $choice | cut -d' ' -f1)" ;;
+  esac
 fi

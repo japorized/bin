@@ -6,7 +6,7 @@ _rofi() {
     -dmenu -font "Hack Nerd Font 10" -mesg "scrot menu"
 }
 
-choice=$(echo "|濾|类|" | _rofi)
+choice=$(echo -n "|濾|类|" | _rofi)
 
 case "$choice" in
   )

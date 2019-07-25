@@ -7,12 +7,20 @@
 font="Helvetica-Neue" # see convert -list font for a list of fonts available on system
 imgsize="100x100"
 fontsize="50x50"
-outputdir="$XDG_DATA_HOME/iro"
+if [ -n $XDG_DATA_HOME ]; then
+  outputdir="$XDG_DATA_HOME/iro"
+else
+  outputdir="$HOME/.data/iro"
+fi
 palettepidfile="$outputdir/.palettepidfile"
 copycmd="xclip -selection clipboard"
+if [ -n $XDG_CONFIG_HOME ]; then
+  conffile="$XDG_CONFIG_HOME/iro/iro.conf"
+else
+  conffile="$HOME/.config/iro/iro.conf"
+fi
 
 # load personal configs, if any
-conffile="$XDG_CONFIG_HOME/iro/iro.conf"
 if [ -f "$conffile" ]; then
   . "$conffile"
 fi
@@ -22,16 +30,15 @@ usage() {
   
   option:
   (default)       Shows palettes in feh, copyable by hitting Enter while focused
-  -c              Directly copies colour values to clipboard
+  -c              Copy-only mode; directly copies colour value to clipboard
+  -n              No-text mode; will not print colour value to palette
   -h              Show this help
 
   argument:
-  hex (default)   Shows image with hex value
-  rgb             Shows image with rgb value
-  clean           Shows clean image with no colour value (copying will copy hex value)
-  clear           Clears all images in $outputdir
-  kill            Kill all existing feh instances created by iro"
-  
+  hex (default)   Shows palette with hex value
+  rgb             Shows palette with rgb value
+  clear           Remove all palettes from screen
+  clean           Cleans palette in $outputdir"
 }
 
 checkOutputDir() {
@@ -47,9 +54,9 @@ checkOutputDir() {
 
 createPalette() {
   case "$2" in
-    "clean")
+    "no-text")
       convert \
-        \( -background transparent -size $imgsize xc:$1 \) \
+        \( -background transparent -size $imgsize xc:"$1" \) \
         "$outputdir/$1.png"
       ;;
     *)
@@ -124,11 +131,13 @@ main() {
   checkOutputDir
 
   # high level options
-  c_flag=false
+  c_flag=false # copy-only
+  n_flag=false # no-text
 
-  while getopts ":ch" opt; do
+  while getopts ":cnh" opt; do
     case "${opt}" in
       c) c_flag=true ;;
+      n) n_flag=true ;;
       h)
         usage
         exit 0
@@ -144,29 +153,25 @@ main() {
   # main argument
   subcmd=$1
   case "$subcmd" in
-    "rgb")
-      sel=$(xcolor -f rgb)
+    "rgb" | "hex")
+      sel=$(xcolor -f $subcmd)
       if [ $c_flag = false ]; then
-        createPalette "$sel" rgb
-      else
-        echo -n "$sel" | $copycmd
-      fi
-      ;;
-    "kill")
-      killallPalettes
-      ;;
-    "clean")
-      sel=$(xcolor -f hex)
-      if [ $c_flag = false ]; then
-        createPalette "$sel" clean
+        if [ $n_flag = false ]; then
+          createPalette "$sel" $subcmd
+        else
+          createPalette "$sel" no-text
+        fi
       else
         echo -n "$sel" | $copycmd
       fi
       ;;
     "clear")
+      killallPalettes
+      ;;
+    "clean")
       rm $outputdir/*.png
       ;;
-    "hex" | *)
+    *)
       sel=$(xcolor -f hex)
       if [ $c_flag = false ]; then
         createPalette "$sel" hex

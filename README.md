@@ -13,6 +13,7 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 * `color.sh` - `bash`
 * `displaysleep` - `xset`
 * `duck` - `rofi, xargs`
+* `gifresizer` - `gifsicle, xrandr`
 * `iro` - `xcolor, feh, imagemagick, xclip (changable)`
 * `move-lemonbar-to-back.sh` - `xdotool`
 * `mv-mybin-to-repo.sh` - `[none]`
