@@ -1,0 +1,179 @@
+#!/usr/bin/env bash
+# Dependencies: xcolor, feh, imagemagick, expr (gnutils), xclip
+# You may copy the CONFIGURABLES and put them in $XDG_CONFIG_HOME/iro/iro.conf
+# and edit them as you please.
+
+# CONFIGURABLES
+font="Helvetica-Neue" # see convert -list font for a list of fonts available on system
+imgsize="100x100"
+fontsize="50x50"
+outputdir="$XDG_DATA_HOME/iro"
+palettepidfile="$outputdir/.palettepidfile"
+copycmd="xclip -selection clipboard"
+
+# load personal configs, if any
+conffile="$XDG_CONFIG_HOME/iro/iro.conf"
+if [ -f "$conffile" ]; then
+  . "$conffile"
+fi
+
+usage() {
+  echo "  Usage: iro [option] [argument]
+  
+  option:
+  (default)       Shows palettes in feh, copyable by hitting Enter while focused
+  -c              Directly copies colour values to clipboard
+  -h              Show this help
+
+  argument:
+  hex (default)   Shows image with hex value
+  rgb             Shows image with rgb value
+  clean           Shows clean image with no colour value (copying will copy hex value)
+  clear           Clears all images in $outputdir
+  kill            Kill all existing feh instances created by iro"
+  
+}
+
+checkOutputDir() {
+  if [ ! -d "$outputdir" ]; then
+    echo "$outputdir not found. Creating $outputdir..."
+    mkdir $outputdir
+  fi
+  if [ ! -f "$palettepidfile" ]; then
+    echo "$palettepidfile not found. Creating empty $palettepidfile..."
+    touch $palettepidfile
+  fi
+}
+
+createPalette() {
+  case "$2" in
+    "clean")
+      convert \
+        \( -background transparent -size $imgsize xc:$1 \) \
+        "$outputdir/$1.png"
+      ;;
+    *)
+      convert \
+        \( -background transparent -size $imgsize xc:"$1" \) \
+        \( -background transparent -size $fontsize -fill $(setPaletteFontColor "$1" $2) -gravity center -font "$font" caption:"$1" \) \
+        -gravity center -composite "$outputdir/$1.png"
+  esac
+  showPalette "$1"
+}
+
+# Look through pidfile for feh instances.
+# Kill process if process name is still feh,
+# that is, that the process is still being used by a feh instance.
+# This is because the user is free to remove the palettes
+# by quitting feh normally
+killallPalettes() {
+  for i in $(cat $palettepidfile)
+  do
+    procname=$(ps -p $i -o comm=)
+    if [ "$procname" = "feh" ]; then
+      pkill -P $i
+      kill -s TERM $i
+    fi
+  done
+  echo "" > $palettepidfile
+}
+
+# the idea and code themselves are simple
+# take the total and use the midpoint as the thresholds
+# for light or dark font colour
+lightDarkDecider() {
+  red=$1
+  green=$2
+  blue=$3
+  total=$(expr $red + $green + $blue)
+  if [ $total -le 382 ]; then
+    echo 'white'
+  else
+    echo 'black'
+  fi
+}
+
+# we have to deal with different colour formats separately
+setPaletteFontColor() {
+  case "$2" in
+    rgb) # format that it receives is rgb(rrr, ggg, bbb)
+      striped=$(echo -n ${1#rgb(} | tr -d ")")
+      red=$(echo -n $striped | cut -d, -f1)
+      green=$(echo -n $striped | cut -d, -f2)
+      blue=$(echo -n $striped | cut -d, -f3)
+      echo $(lightDarkDecider $red $green $blue)
+      ;;
+    hex) # format that it receives is #rrggbb
+      hexval=${1#\#}
+      red=$(printf "%d" 0x${hexval:0:2})
+      green=$(printf "%d" 0x${hexval:2:2})
+      blue=$(printf "%d" 0x${hexval:4:2})
+      echo $(lightDarkDecider $red $green $blue)
+      ;;
+    *)
+      echo 'black'
+  esac
+}
+
+showPalette() {
+  feh --action "echo -n \"$1\" | $copycmd" "$outputdir/$1.png" &
+  echo $! >> $palettepidfile
+}
+
+main() {
+  checkOutputDir
+
+  # high level options
+  c_flag=false
+
+  while getopts ":ch" opt; do
+    case "${opt}" in
+      c) c_flag=true ;;
+      h)
+        usage
+        exit 0
+        ;;
+      \? ) 
+        usage
+        exit 1
+        ;;
+    esac
+  done
+  shift $((OPTIND -1)) # done with high level options
+
+  # main argument
+  subcmd=$1
+  case "$subcmd" in
+    "rgb")
+      sel=$(xcolor -f rgb)
+      if [ $c_flag = false ]; then
+        createPalette "$sel" rgb
+      else
+        echo -n "$sel" | $copycmd
+      fi
+      ;;
+    "kill")
+      killallPalettes
+      ;;
+    "clean")
+      sel=$(xcolor -f hex)
+      if [ $c_flag = false ]; then
+        createPalette "$sel" clean
+      else
+        echo -n "$sel" | $copycmd
+      fi
+      ;;
+    "clear")
+      rm $outputdir/*.png
+      ;;
+    "hex" | *)
+      sel=$(xcolor -f hex)
+      if [ $c_flag = false ]; then
+        createPalette "$sel" hex
+      else
+        echo -n "$sel" | $copycmd
+      fi
+  esac
+}
+
+main "$@"

@@ -13,6 +13,7 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 * `color.sh` - `bash`
 * `displaysleep` - `xset`
 * `duck` - `rofi, xargs`
+* `iro` - `xcolor, feh, imagemagick, xclip (changable)`
 * `move-lemonbar-to-back.sh` - `xdotool`
 * `mv-mybin-to-repo.sh` - `[none]`
 * `mypactl` - `pulseaudio-ctl`
@@ -21,6 +22,7 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 * `returnWindowInfo.sh` - `xorg-xwininfo, xdotool`
 * `RNGesus` - `[none]`
 * `rofi-btctl` - `rofi, bluetoothctl`
+* `rofi-iro` - `rofi, iro`
 * `rofi-lemon` - `rofi, show-lemonbar`
 * `rofimoji`
 * `rofi-mpc` - `rofi, mpc`

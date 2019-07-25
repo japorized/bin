@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+_rofi() {
+  rofi -sep '|' -columns 5 -lines 1 -disable-history true -cycle true \
+    -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 500 -height 20 \
+    -dmenu -font "Hack Nerd Font 10" -mesg "rofi-iro"
+}
+
+choice=$(echo -n "hex|rgb|clean|kill|clear" | _rofi)
+retval=$?
+if [ $retval != "1" ]; then
+  iro "${choice}"
+fi

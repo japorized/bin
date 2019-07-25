@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Dependencies: gifsicle, xrandr
+
+usage() {
+	echo "Usage: gifresizer -i <inputfile> -o <outputfile> [-d <geometry>]
+  
+  geometry format: widthxheight+x+y
+
+  Options:
+  -h    Show this help
+  -d    Set geometry (defaults to screen resolution)
+"
+}
+
+geometry=""
+while getopts "hi:g:o:" flag; do
+  case "${flag}" in
+    h) usage
+      exit 0
+      ;;
+    i)
+      inputfile="${OPTARG}"
+      ;;
+    d)
+      geometry="${OPTARG}"
+      ;;
+    o)
+      outputfile="${OPTARG}"
+      ;;
+    *) usage
+      exit 1
+      ;;
+  esac
+done
+
+if [ -z "${inputfile}" ] || [ -z "${outputfile}" ]; then
+  echo "Missing input/output file. Exiting..."
+  exit 1
+fi
+
+if [ -z "${geometry}" ]; then
+  geometry=$(xrandr --nograb --current | awk '/\*/ {printf $1; exit}')
+fi
+
+gifsicle "${inputfile}" --resize "${geometry}" > "${outputfile}"

@@ -6,7 +6,7 @@ _rofi() {
     -dmenu -font "Hack Nerd Font 40" "$@"
 }
 
-choice=$(echo "|||||" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Goodbye, Japorized!</span>")
+choice=$(echo -n "|||||" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Goodbye, Japorized!</span>")
 
 case "$choice" in
   )
