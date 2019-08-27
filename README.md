@@ -14,6 +14,7 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 * `displaysleep` - `xset`
 * `duck` - `rofi, xargs`
 * `gifresizer` - `gifsicle, xrandr`
+* `hex2rgba`
 * `iro` - `xcolor, feh, imagemagick, xclip (changable)`
 * `move-lemonbar-to-back.sh` - `xdotool`
 * `mv-mybin-to-repo.sh` - `[none]`
@@ -21,11 +22,13 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 * `refresh-indicators.sh` - `lemonbar`
 * `refresh-tint2.sh` - `tint2`
 * `returnWindowInfo.sh` - `xorg-xwininfo, xdotool`
+* `rgba2hex` - `bc`
 * `RNGesus` - `[none]`
+* `rofi-auracle` - `rofi, auracle, makepkg, notify-send, nvim`
 * `rofi-btctl` - `rofi, bluetoothctl`
+* `rofi-calc` - `rofi, xclip, calc`
 * `rofi-iro` - `rofi, iro`
 * `rofi-lemon` - `rofi, show-lemonbar`
-* `rofimoji`
 * `rofi-mpc` - `rofi, mpc`
 * `rofi-nerdfonts` - `rofi`
 * `rofi-netctl` - `rofi, netctl`
@@ -33,7 +36,9 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 * `rofi-scrot` - `rofi, ss-with-preview.sh`
 * `rofi-scrot-action` - `rofi, zenity`
 * `rofi-startmenu` - `rofi`
-* `rofianime` - `rofi`
+* `rofi-sxhkd-cheatsheet` - `rofi, sxhkd, awk`
+* `rofi-systemctl-user` - `rofi, systemd`
+* `rofianime` - `rofi, bc, (optionally) mpv, thunar`
 * `rofiawesome` - `rofi` (credits to [wstam/rofi-fontawesome](https://github.com/wstam88/rofi-fontawesome))
 * `rofimoji` - `rofi`
 * `rofiwpg` - `rofi, wpgtk`
@@ -44,6 +49,7 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 * `ss-with-preview.sh` - `imagemagick, n30f, lemonbar, scrot, gimp`
 * `st-tmux` - `st, tmux`
 * `surf-open.sh` - `surf, tabbed`
+* `svg2png` - `inkscape`
 * `tabbed-zathura` - `zathura, tabbed`
 * `termite-tmux` - `termite, tmux`
 * `termite-vim-simplenote` - `termite, vim` (with [simplenote.vim](https://github.com/mrtazz/simplenote.vim))

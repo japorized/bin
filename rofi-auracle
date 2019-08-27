@@ -48,7 +48,7 @@ clean() {
   
   build=$(echo $buildlist | _rofi -multi-select -sep "|")
   val=$?
-  if [ "$val" != "-1" ]; then
+  if [ "$val" != "1" ]; then
     confirm=$(echo "No|Yes" | _rofi -sep "|" -mesg "Removing ($build). Are you sure?")
     if [ "$confirm" = "No" ]; then
       exit 0

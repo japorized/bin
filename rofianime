@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 # Written by Japorized <johnson5756 (at) live (dot) com>
+# Required Dependencies:
+# rofi, bc
+# Optional Dependencies:
+# mpv, thunar
+#
 # Make sure that your video files are renamed in the following format:
 #   *- [x].ext
 # where x is the episode number, which can be of any length.
@@ -13,7 +18,7 @@ animedir="$HOME/Videos/Anime"
 vidplayer="/usr/bin/mpv"
 filemanager="/usr/bin/thunar"
 fileext="(.mkv|.mp4|.webm)" # use regex (PCRE)
-renamers="HorribleSubs" # |-separated
+renamers="HorribleSubs|Teasing Anon" # |-separated
 rofiopts=""
 dmenuopts=""
 
@@ -39,9 +44,13 @@ _rofi() {
 
 _renamer() {
   case "$1" in
-    HorribleSubs)
-      for f in *HorribleSubs* ; do
-        mv "$f" "$(echo $f | sed 's/\[HorribleSubs\] //g' | sed 's/ \[[0-9]*p\]//g' | sed 's/\([0-9]\{2\}\)/\[\0\]/g')"
+    "HorribleSubs" | "Teasing Anon")
+      for f in *"$1"* ; do
+        filename=$(echo $f \
+          | sed "s/\[$1\] //g" \
+          | sed 's/ \[[0-9]*p\]//g' \
+          | sed -E "s/ - ([0-9]+\.?[0-9]+)/ - [\1]/g")
+        mv "$f" "$filename"
       done && rofi -e "Success"
       ;;
   esac
@@ -72,50 +81,75 @@ getEpisode() {
   episodearr=($(ls | grep -E $fileext | sed 's/:.*//'))
   unset IFS
   
+  lastWatchedEp=$(getBookmark .bookmark)
+  if [ -n $lastWatchedEp ]; then
+    nextEp=$(echo $lastWatchedEp + 1 | bc)
+  else
+    nextEp=""
+  fi
+  
   episodelist=""
   for idx in "${!episodearr[@]}"
   do
     if [ -z "$episodelist" ]; then
       episodelist="${episodearr[$idx]}"
     else
-      episodelist="$episodelist|${episodearr[$idx]}"
+      if [ -n $nextEp ]; then
+        # try to put next episode as the first choice
+        curEp=$(echo $(getEpNum "${episodearr[$idx]}") | bc)
+        if [ $curEp != $nextEp ]; then
+          episodelist="$episodelist|${episodearr[$idx]}"
+        else
+          episodelist="${episodearr[$idx]}|$episodelist"
+        fi
+      else
+        episodelist="$episodelist|${episodearr[$idx]}"
+      fi
     fi
   done
-  
-  if [ -e .bookmark ]; then
-    lastepi=$(cat .bookmark)
-  else
-    echo "" > .bookmark
-  fi
 
-  rofimsg="<i><b>Last Episode:</b> $lastepi</i>
+  rofimsg="<i><b>Last Episode:</b> $lastWatchedEp</i>
 <span color='${highlightcolor}'>${goback}</span> to go back | <span color='${highlightcolor}'>${useRenamer}</span> to automagically rename certain files | <span color='${highlightcolor}'>${openInFM}</span> open in file manager"
 
-  episode=$(echo $episodelist | _rofi -mesg "$rofimsg" ${dmenuopts} -kb-custom-1 "${goback}" -kb-custom-2 "${useRenamer}" -kb-custom-3 "${openInFM}" )
+  episode=$(echo $episodelist \
+    | _rofi -mesg "$rofimsg" ${dmenuopts} \
+      -kb-custom-1 "${goback}" -kb-custom-2 "${useRenamer}" \
+      -kb-custom-3 "${openInFM}" )
 
   val=$?
-  if [ $val -eq 10 ]; then
-    main
-  elif [ $val -eq 11 ]; then
-    renameChoice=$(echo "$renamers" | _rofi -mesg "Pick an option")
-    _renamer "$renameChoice"
-  elif [ $val -eq 12 ]; then
-    ${filemanager} .
-  elif [ $val -eq 1 ]; then
-    exit 0
-  else
-    echo "$episode"
-  fi
+  case "$val" in
+    10) main ;;
+    11) renameFiles ;;
+    12) ${filemanager} . ;;
+    1) exit 0 ;;
+    *) echo "$episode"
+  esac
+}
+
+renameFiles() {
+  renameChoice=$(echo "$renamers" | _rofi -mesg "Pick an option")
+  _renamer "$renameChoice"
+}
+
+getEpNum() {
+  epnum=$(echo "$1" | sed -E "s/.+ - \[(.+)\]$fileext/\1/g")
+  echo $epnum
 }
 
 setBookmark() {
-  rempref=$(echo ${1#*-\ \[})
-  remsuff=$(echo ${rempref%\].*})
-  echo $remsuff > .bookmark
+  echo $(getEpNum "$1") > .bookmark
+}
+
+getBookmark() {
+  if [ -e .bookmark ]; then
+    cat .bookmark
+  else
+    echo "" > .bookmark
+  fi
 }
 
 main() {
-  cd $animedir
+  cd "$animedir"
 
   animeRes=$(getAnime)
   if [ -z "$animeRes" ]; then

@@ -1,16 +1,25 @@
 #!/usr/bin/env bash
 
 pulse=$(which pulseaudio-ctl)
-indicator="~/.config/lemonbar/vol.sh"
 sound="$HOME/.data/sounds/blop.mp3"
 
 muteStat=$(/usr/bin/pulseaudio-ctl full-status | cut -d " " -f2)
 
-while getopts "mu:d:" flag; do
+while getopts "mu:d:g" flag; do
   case "${flag}" in
+    d)
+      if [ "$muteStat" = "yes" ]
+      then
+        $pulse mute
+      fi
+      $pulse down $OPTARG
+      ffplay -nodisp -vn -autoexit "$sound" &
+      ;;
+    g)
+      $pulse full-status | cut -d" " -f1 -z
+      ;;
     m)
       $pulse mute
-      sh -c $indicator &
       ;;
     u)
       if [ "$muteStat" = "yes" ]
@@ -18,17 +27,7 @@ while getopts "mu:d:" flag; do
         $pulse mute
       fi
       $pulse up $OPTARG
-      ffplay -nodisp -vn -autoexit "$sound"
-      sh -c $indicator &
+      ffplay -nodisp -vn -autoexit "$sound" &
       ;;
-    d)
-      if [ "$muteStat" = "yes" ]
-      then
-        $pulse mute
-      fi
-      echo $OPTARG
-      $pulse down $OPTARG
-      ffplay -nodisp -vn -autoexit "$sound"
-      sh -c $indicator &
   esac
 done

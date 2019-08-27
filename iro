@@ -31,7 +31,10 @@ usage() {
   option:
   (default)       Shows palettes in feh, copyable by hitting Enter while focused
   -c              Copy-only mode; directly copies colour value to clipboard
+                  [mutually exclusive with -p]
   -n              No-text mode; will not print colour value to palette
+  -p              Provide your own color code
+                  [mutually exclusive with -c]
   -h              Show this help
 
   argument:
@@ -131,13 +134,23 @@ main() {
   checkOutputDir
 
   # high level options
-  c_flag=false # copy-only
+  c_flag=false # copy-only    <---------- mutually exclusive
+  p_flag=false # provide color code ---|
   n_flag=false # no-text
 
-  while getopts ":cnh" opt; do
+  while getopts ":cnph" opt; do
     case "${opt}" in
-      c) c_flag=true ;;
+      c)
+        if [ $p_flag = false ]; then
+          c_flag=true
+        fi
+        ;;
       n) n_flag=true ;;
+      p)
+        if [ $c_flag = false ]; then
+          p_flag=true
+        fi
+        ;;
       h)
         usage
         exit 0
@@ -152,33 +165,60 @@ main() {
 
   # main argument
   subcmd=$1
-  case "$subcmd" in
-    "rgb" | "hex")
-      sel=$(xcolor -f $subcmd)
-      if [ $c_flag = false ]; then
-        if [ $n_flag = false ]; then
-          createPalette "$sel" $subcmd
+  if [ $p_flag = false ]; then
+    case "$subcmd" in
+      "rgb" | "hex")
+        sel=$(xcolor -f $subcmd)
+        if [ $c_flag = false ]; then
+          if [ $n_flag = false ]; then
+            createPalette "$sel" $subcmd
+          else
+            createPalette "$sel" no-text
+          fi
         else
-          createPalette "$sel" no-text
+          echo -n "$sel" | $copycmd
         fi
-      else
-        echo -n "$sel" | $copycmd
-      fi
-      ;;
-    "clear")
-      killallPalettes
-      ;;
-    "clean")
-      rm $outputdir/*.png
-      ;;
-    *)
-      sel=$(xcolor -f hex)
-      if [ $c_flag = false ]; then
-        createPalette "$sel" hex
-      else
-        echo -n "$sel" | $copycmd
-      fi
-  esac
+        ;;
+      "clear")
+        killallPalettes
+        ;;
+      "clean")
+        rm $outputdir/*.png
+        ;;
+      *)
+        sel=$(xcolor -f hex)
+        if [ $c_flag = false ]; then
+          createPalette "$sel" hex
+        else
+          echo -n "$sel" | $copycmd
+        fi
+    esac
+  else
+    shift
+    ccode=$1
+    if [ -z $ccode ]; then
+      echo "Please provide $subcmd color code"
+      exit 1
+    fi
+
+    case "$subcmd" in
+      "rgb" | "hex")
+        if [ $n_flag = false ]; then
+          createPalette "$ccode" $subcmd
+        else
+          createPalette "$ccode" no-text
+        fi
+        ;;
+      "clear")
+        killallPalettes
+        ;;
+      "clean")
+        rm $outputdir/*.png
+        ;;
+      *)
+        createPalette "$ccode" hex
+    esac
+  fi
 }
 
 main "$@"

@@ -2,6 +2,7 @@
 
 wpgc=$(which wpg)
 editor=$(which nvim-qt)
+fm=$(which thunar)
 
 if [ -z $wpgc ]; then
   echo "wpg not found in path. Make sure that wpgtk is installed wpg is in your path."
@@ -14,24 +15,35 @@ template="Alt+t"
 schemes="Alt+s"
 config="Alt+c"
 delete="Alt+d"
+openinfm="Alt+t"
 highlightcolor="Aqua"
 
 . "$HOME/.config/rofi/script-configs/rofiwpg.conf"
 
+copentag="<span color='${highlightcolor}'>"
+cclosetag="</span>"
 helpmsg="Actions:
-<span color='${highlightcolor}'>(Alt+t)</span> edit templates | <span color='${highlightcolor}'>(Alt+s)</span> edit schemes
-<span color='${highlightcolor}'>(Alt+c)</span> edit config | <span color='${highlightcolor}'>(Alt+d)</span> delete theme"
+${copentag}(Alt+t)${cclosetag} edit templates | ${copentag}(Alt+s)${cclosetag} edit schemes
+${copentag}(Alt+c)${cclosetag} edit config | ${copentag}(Alt+d)${cclosetag} delete theme"
 
 _rofi() {
   rofi -dmenu -markup-rows -i -p "${wpgprompt}" "$@"
 }
 
 edittemplate() {
-  choice=$(${wpgc} -lt | _rofi)
+  choice=$(${wpgc} -lt | _rofi -kb-custom-1 "${openinfm}" -mesg "${copentag}${openinfm}${cclosetag} open templates in file manager")
+  val=$?
 
-  if [ -n "$choice" ]; then
-    ${editor} ${wpgcfgpath}/templates/${choice}
-  fi
+  case "$val" in
+    0)
+      if [ -n "$choice" ]; then
+        ${editor} ${wpgcfgpath}/templates/${choice}
+      fi
+      ;;
+    10)
+      ${fm} ${wpgcfgpath}/templates/
+      ;;
+  esac
 }
 
 editschemes() {

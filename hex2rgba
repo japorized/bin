@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+if [ -z "$1" ]; then
+  echo "Please provide hex code"
+  exit 1
+fi
+
+hexval=${1#\#}
+red=$(printf "%d" 0x${hexval:0:2})
+green=$(printf "%d" 0x${hexval:2:2})
+blue=$(printf "%d" 0x${hexval:4:2})
+alpharaw=${hexval:6:2}
+
+if [ -z $alpharaw ]; then
+  alpha="1"
+else
+  alphahex=$(printf "%d" 0x${hexval:6:2})
+  alpha=$(echo "scale=2; $alphahex.0 / 255" | bc)
+fi
+
+echo "rgba($red, $green, $blue, $alpha)"

@@ -1,0 +1,156 @@
+#!/usr/bin/env bash
+# Author: Japorized <japorized@tuta.io>
+# Dependencies: systemd, rofi
+# A simple rofi interface to systemd for the user (not system)
+
+# CONFIGURABLES
+rofiopts="-lines 9"
+dmenuopts=""
+rofiprompt=" systemctl --user"
+
+# load configs
+confpath="$XDG_CONFIG_HOME/rofi/script-configs/rofi-systemctl-user.conf"
+if [ -f $confpath ]; then
+  . "$HOME/.config/rofi/script-configs/rofi-systemctl-user.conf"
+fi
+
+_rofi() {
+  rofi ${rofiopts} -sep '|' -dmenu -i -p "${rofiprompt}" ${dmenuopts} "$@"
+}
+
+# function join_by { local d=$1; shift; echo -n "$1"; shift; printf "%s" "${@/#/$d}"; }
+
+getEnabledServices() {
+  IFS=$'\n'
+  userServices=($(systemctl --user list-unit-files | grep enabled | cut -d" " -f1))
+  unset IFS
+  
+  echo ${userServices[@]}
+}
+
+getDisabledServices() {
+  IFS=$'\n'
+  userServices=($(systemctl --user list-unit-files | grep disabled | cut -d" " -f1))
+  unset IFS
+  
+  echo ${userServices[@]}
+}
+
+isActive() {
+  systemctl --user is-active "$1"
+}
+
+enableServiceMenu() {
+  disabledServices=""
+  for service in $(getDisabledServices)
+  do
+    if [ -n "$disabledServices" ]; then
+      disabledServices="$disabledServices|$service"
+    else
+      disabledServices="$service"
+    fi
+  done
+
+  choice=$(echo -n $disabledServices | _rofi)
+  rofiExitCode=$?
+  if [ "$rofiExitCode" != "1" ]; then
+    systemctl --user enable ${choice}
+  fi
+}
+
+disableServiceMenu() {
+  enabledServices=""
+  for service in $(getEnabledServices)
+  do
+    if [ -n "$enabledServices" ]; then
+      enabledServices="$enabledServices|$service"
+    else
+      enabledServices="$service"
+    fi
+  done
+
+  choice=$(echo -n $enabledServices | _rofi)
+  rofiExitCode=$?
+  if [ "$rofiExitCode" != "1" ]; then
+    systemctl --user disable ${choice}
+  fi
+}
+
+restartServiceMenu() {
+  activeServices=""
+  for service in $(getEnabledServices)
+  do
+    serviceStatus=$(isActive $service)
+    if [ $serviceStatus = "active" ] || [ $serviceStatus = "failed" ]; then
+      if [ -n "$activeServices" ]; then
+        activeServices="$activeServices|$service"
+      else
+        activeServices="$service"
+      fi
+    fi
+  done
+
+  choice=$(echo -n $activeServices | _rofi)
+  rofiExitCode=$?
+  if [ "$rofiExitCode" != "1" ]; then
+    systemctl --user restart ${choice}
+  fi
+}
+
+startServiceMenu() {
+  activeServices=""
+  for service in $(getEnabledServices)
+  do
+    if [ $(isActive $service) = "inactive" ]; then
+      if [ -n "$activeServices" ]; then
+        activeServices="$activeServices|$service"
+      else
+        activeServices="$service"
+      fi
+    fi
+  done
+
+  choice=$(echo -n $activeServices | _rofi)
+  rofiExitCode=$?
+  if [ "$rofiExitCode" != "1" ]; then
+    systemctl --user start ${choice}
+  fi
+}
+
+stopServiceMenu() {
+  activeServices=""
+  for service in $(getEnabledServices)
+  do
+    if [ $(isActive $service) = "active" ]; then
+      if [ -n "$activeServices" ]; then
+        activeServices="$activeServices|$service"
+      else
+        activeServices="$service"
+      fi
+    fi
+  done
+
+  choice=$(echo -n $activeServices | _rofi)
+  rofiExitCode=$?
+  if [ "$rofiExitCode" != "1" ]; then
+    systemctl --user stop ${choice}
+  fi
+}
+
+main() {
+  mainopts="enable service|disable service|start service|restart service|stop service"
+  choice=$(echo -n "$mainopts" | _rofi)
+  rofiExitCode=$?
+
+  if [ "$rofiExitCode" != "1" ]; then
+    case "${choice}" in
+      "enable service") enableServiceMenu ;;
+      "disable service") disableServiceMenu ;;
+      "start service") startServiceMenu ;;
+      "restart service") restartServiceMenu ;;
+      "stop service") stopServiceMenu ;;
+    esac
+  fi
+}
+
+main

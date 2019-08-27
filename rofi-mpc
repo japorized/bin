@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 
+mpc_status() {
+  status=$(mpc | sed -n 2p | awk -F " " '{print $1}')
+  echo ${status}
+}
+
 _rofi() {
   rofi -sep '|' -columns 8 -lines 1 -disable-history true -cycle true \
     -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 550 -height 20 \
-    -dmenu -font "Hack Nerd Font 10"
+    -dmenu -font "Hack Nerd Font 10" -mesg "$(mpc_status) $(mpc current)"
 }
 
 inform() {

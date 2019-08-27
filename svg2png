@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+source=$1
+
+if [ -z $source ]; then
+  echo "[svg2png] Please provide source svg file"
+  exit 1
+fi
+
+/usr/bin/inkscape -z -e ${source%svg}png ${source}

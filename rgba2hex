@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+round() {
+  echo $(printf %.$2f $(echo "scale=$2;(((10^$2)*$1)+0.5)/(10^$2)" | bc))
+}
+
+if [ -z "$1" ]; then
+  echo "Please provide rgba code"
+  exit 1
+fi
+
+rgbacheck=${1:0:4}
+has_alpha=false
+
+if [ $rgbacheck = "rgba" ]; then
+  has_alpha=true
+elif [ $rgbacheck = "rgb(" ]; then
+  has_alpha=false
+else
+  echo "  Input is probably not an rgba code.
+  It should either be of the format rgba(rrr, ggg, bbb, a.aa) or rgb(rrr, ggg, bbb).
+  Terminating..."
+  exit 1
+fi
+
+rawcode=$(echo $1 | cut -d '(' -f2- | tr -d ')')
+rawred=$(echo $rawcode | cut -d ',' -f1)
+rawgreen=$(echo $rawcode | cut -d ',' -f2)
+rawblue=$(echo $rawcode | cut -d ',' -f3)
+red=$(printf '%x' $rawred)
+green=$(printf '%x' $rawgreen)
+blue=$(printf '%x' $rawblue)
+
+if [ $has_alpha = true ]; then
+  rawalpha=$(echo $rawcode | cut -d ',' -f4)
+  rawalpha=$(round $(echo "$rawalpha * 255" | bc) 0)
+  alpha=$(printf '%x' $rawalpha)
+  echo "#$red$green$blue$alpha"
+else
+  echo "#$red$green$blue"
+fi
+

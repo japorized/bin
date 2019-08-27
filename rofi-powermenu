@@ -6,6 +6,11 @@ _rofi() {
     -dmenu -font "Hack Nerd Font 40" "$@"
 }
 
+play_exit_sound() {
+  ffplay -nodisp -loglevel quiet -vn -t 6.5 -autoexit \
+    $XDG_DATA_HOME/sounds/場面転換サウンドロゴ_002.m4a
+}
+
 choice=$(echo -n "|||||" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Goodbye, Japorized!</span>")
 
 case "$choice" in
@@ -22,18 +27,21 @@ case "$choice" in
     choice=$(echo "No|Yes" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Logging out. Are you sure?</span>")
     if [ "$choice" = "Yes" ]; then
       cleandesktop.sh
+      play_exit_sound
       bspc quit
     fi
     ;;
   )
     choice=$(echo "No|Yes" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Rebooting. Are you sure?</span>")
     if [ "$choice" = "Yes" ]; then
+      play_exit_sound
       systemctl reboot
     fi
     ;;
   )
     choice=$(echo "No|Yes" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Powering off. Are you sure?</span>")
     if [ "$choice" = "Yes" ]; then
+      play_exit_sound
       systemctl poweroff
     fi
     ;;

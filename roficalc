@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+# Dependencies: calc, rofi, xclip
+
+# configs
+rofiprompt=""
+rofiopts="-no-show-match -no-sort -no-bold"
+dmenuopts=""
+savedir=$HOME/Documents/roficalc
+editor=/usr/bin/gvim
+
+# keybinds
+addhist="Alt+a"
+getval="Alt+c"
+edithist="Alt+e"
+loadhist="Alt+l"
+savehist="Alt+s"
+addhistvar="Alt+v"
+
+# colors
+hlcolor="Aqua"
+
+# load configs
+. "$HOME/.config/rofi/script-configs/roficalc.conf"
+
+_rofi() {
+  rofi ${rofiopts} -sep '|' -dmenu -i -p "${rofiprompt}" ${dmenuopts} "$@"
+}
+
+_calc() {
+  result=$(calc "$@")
+  echo $result
+}
+
+listsaves() {
+  IFS=$'\n'
+  allfiles=($(ls $savedir | sed 's/:.*//'))
+  unset IFS
+
+  filelist=""
+  for idx in "${!allfiles[@]}"
+  do
+    if [ -z "$filelist" ]; then
+      filelist="${allfiles[$idx]}"
+    else
+      filelist="$filelist|${allfiles[$idx]}"
+    fi
+  done
+
+  echo $filelist
+}
+
+edithist() {
+  loadfile=$(listsaves | _rofi -mesg "Edit history")
+  val=$?
+
+  case "$val" in
+    0)
+      if [ "$loadfile" != "" ]; then
+        ${editor} $savedir/$loadfile
+        exit 0
+      fi
+      ;;
+  esac
+}
+
+savehist() {
+  savefile=$(listsaves | _rofi -mesg "Save history")
+  val=$?
+
+  case "$val" in
+    0)
+      if [ "$savefile" != "" ]; then
+        echo $1 | tr "|" "\n" > $savedir/$savefile
+      fi
+      ;;
+  esac
+}
+
+loadhist() {
+  loadfile=$(listsaves | _rofi -mesg "Load history")
+  val=$?
+
+  case "$val" in
+    0)
+      if [ "$loadfile" != "" ]; then
+        retval=$(cat "$savedir/$loadfile" | tr "\n" "|")
+        echo ${retval::-1}
+      fi
+      ;;
+  esac
+}
+
+addtohist() {
+  if [ -n "$1" ]; then
+    echo "$1|$2"
+  else
+    echo "$2"
+  fi
+}
+
+valfromvar() {
+  retval=$(echo "$1" | cut -d ">" -f2-)
+  echo -n $retval
+}
+
+main() {
+  if [ ! -d $savedir ]; then
+    mkdir $savedir
+  fi
+
+  while [ 1 == 1 ]
+  do
+    msg="Result: $lastresult
+<span color='${hlcolor}'>${addhist}</span> Add to hist | <span color='${hlcolor}'>${addhistvar}</span> Add to hist (+var) | <span color='${hlcolor}'>${getval}</span> Copy value
+<span color='${hlcolor}'>${savehist}</span> Save hist   | <span color='${hlcolor}'>${loadhist}</span> Load hist          | <span color='${hlcolor}'>${edithist}</span> Edit hist"
+    input=$(echo $hist | _rofi -mesg "$msg" \
+      -kb-custom-1 "${addhist}" -kb-custom-2 "${addhistvar}" -kb-custom-3 "${getval}" \
+      -kb-custom-4 "${savehist}" -kb-custom-5 "${loadhist}" -kb-custom-6 "${edithist}")
+    val=$?
+
+    case "$val" in
+      1) exit 0 ;;
+      10)
+        if [ "${lastresult:0:1}" == "~" ]; then
+          lastresult=${lastresult#"~"}
+        fi
+        hist=$(addtohist "$hist" "$lastresult")
+        ;;
+      11)
+        var=$(_rofi -mesg "Set a variable for value ${lastresult}")
+        val=$?
+
+        if [ "$val" = "0" ]; then
+          if [ "${lastresult:0:1}" == "~" ]; then
+            lastresult=${lastresult#"~"}
+          fi
+          hist=$(addtohist "$hist" "$var->$lastresult")
+        fi
+        ;;
+      12)
+        valfromvar "$input" | xclip -in -selection clipboard
+        ;;
+      13) savehist "$hist" ;;
+      14) hist=$(loadhist) ;;
+      15) edithist ;;
+      0)
+        lastresult=$(_calc "$input")
+        ;;
+      esac
+  done
+}
+
+main

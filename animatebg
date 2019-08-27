@@ -4,30 +4,30 @@ vidfile=$1
 pidfile=$HOME/.cache/animatebg.pid
 
 killvid() {
-  for l in $(cat $pidfile)
-  do
-    pkill -P $l
-    kill -s TERM $l
-  done
-  rm $pidfile
+  if [ -e "$pidfile" ]; then
+    for l in $(cat $pidfile)
+    do
+      pkill -P $l
+      kill -s TERM $l
+    done
+    rm $pidfile
+  fi
 }
 
-if [ -z $vidfile ]
-then
+if [ -z "$vidfile" ]; then
   echo "No video/GIF file provided."
   exit 1
-elif [ ! "$vidfile" = "kill" ]
-then
+elif [ ! "$vidfile" = "kill" ]; then
   killvid
   
   if [ "${vidfile: -4}" == ".gif" ]; then
     /usr/bin/xwinwrap -g "$(xrandr --nograb --current | awk '/\*/ {printf $1; exit}')+0+0" -ni -s -nf -b -un -argb -fdt  -- \
       /usr/bin/gifview -a -w WID $vidfile &
   else
-    /usr/bin/xwinwrap -b -argb -un -s -fs -ov -ni -nf -fdt -- \
+    /usr/bin/xwinwrap -b -argb -un -s -g "$(xrandr --nograb --current | awk '/\*/ {printf $1; exit}')+0+0" -ni -nf -fdt -- \
       /usr/bin/mpv -wid WID --no-config --keepaspect=no --loop \
         --no-border --vd-lavc-fast --x11-bypass-compositor=no \
-        --aid=no --vo=xv --hwdec=auto --really-quiet $vidfile &
+        --aid=no --vo=xv --hwdec=auto --really-quiet "$vidfile" &
   fi
 
   echo $! > $pidfile

@@ -3,10 +3,26 @@
 _rofi() {
   rofi -sep '|' -columns 8 -lines 1 -disable-history true -cycle true \
     -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 1000 -height 20 \
-    -dmenu -font "Hack Nerd Font 10" -mesg " iro"
+    -dmenu -font "Hack Nerd Font 10" -mesg " iro" "$@"
 }
 
-choice=$(echo -en "hex |rgb |hex |rgb |hex |rgb |clear|clean" | _rofi)
+_rofi_takeval() {
+  promptval=$1
+  shift
+  rofi -dmenu -i -p "${promptval}" \
+  -width 300 -height 10 -line 0 "$@"
+}
+
+provideColor() {
+  value=$(_rofi_takeval "$1 code")
+  exitcode=$?
+  case "$exitcode" in
+    1) exit 0 ;;
+    *) iro -p $1 $value
+  esac
+}
+
+choice=$(echo -en "hex |rgb |hex |rgb |hex |rgb |hex  only|rgb  only|clear|clean" | _rofi)
 retval=$?
 if [ $retval != "1" ]; then
   case "$choice" in
@@ -14,5 +30,7 @@ if [ $retval != "1" ]; then
     "hex " | "rgb ") iro "$(echo $choice | cut -d' ' -f1)" ;;
     "hex " | "rgb ") iro -c "$(echo $choice | cut -d' ' -f1)" ;;
     "hex " | "rgb ") iro -n "$(echo $choice | cut -d' ' -f1)" ;;
+    "hex  only") provideColor "hex" ;;
+    "rgb  only") provideColor "rgb" ;;
   esac
 fi
