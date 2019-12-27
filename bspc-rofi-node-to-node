@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Dependencies: rofi, bspwm, xtitle, xprop
+
+xprop_wmclass_prefix="WM_CLASS(STRING) = "
+
+_rofi() {
+  rofi -dmenu -i -p "Select node" -sep ";"
+}
+
+_bspctonode() {
+  bspc node -n "$1" --follow
+}
+
+windowtitles=""
+for node in $(bspc query --nodes --desktop); do
+  nodetitle=$(xtitle -f "%s" $node)
+  if [ -n $nodetitle ]; then
+    nodetitle=$(xprop WM_CLASS -id "$node" | cut -d"," -f1)
+    nodetitle=${nodetitle#"$xprop_wmclass_prefix"}
+  fi
+  windowtitles="${windowtitles}|${nodetitle}"
+done
+
+echo $windowtitles

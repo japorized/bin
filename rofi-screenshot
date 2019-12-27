@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+# Dependencies:
+# rofi, awk, .bin/screenshot.sh
+
+# keybindings
+shadow_key="Alt+s"
+copy_key="Alt+c"
+delay_key="Alt+d"
+
+# configurations
+font="Hack Nerd Font 10"
+
+highlightcolor='Aqua'
+
+# load configs
+. "$HOME/.config/rofi/script-configs/rofi-screenshot.conf"
+
+opts=""
+shadow_flag=false
+copy_flag=false
+delay_flag=false
+delay=0
+screenshot=$HOME/.bin/screenshot.sh
+
+_rofi() {
+  rofi -sep '|' -columns 3 -lines 1 -disable-history true -cycle true \
+    -theme $XDG_CONFIG_HOME/rofi/theme/rofi-smallmenu.rasi \
+    -location 5 -width 550 -height 20 \
+    -dmenu -font "${font}" \
+    "$@"
+}
+
+toggleShadow() {
+  if ($shadow_flag); then
+    opts=$(echo "$opts" | sed 's/-s//g' | awk '{$1=$1};1')
+    shadow_flag=false
+  else
+    opts="$opts -s"
+    shadow_flag=true
+  fi
+}
+
+toggleCopy() {
+  if ($copy_flag); then
+    opts=$(echo "$opts" | sed 's/-c//g' | awk '{$1=$1};1')
+    copy_flag=false
+  else
+    opts="$opts -c"
+    copy_flag=true
+  fi
+}
+
+toggleDelay() {
+  if ($delay_flag); then
+    opts=$(echo "$opts" | sed "s/-d ${delay}//g" | awk '{$1=$1};1')
+    delay_flag=false
+  else
+    delay=$(echo -n "3|5|7" | _rofi -mesg "Choose a delay:")
+    rofi_retval=$?
+
+    case "${rofi_retval}" in
+      1) exit 1 ;;
+      0)
+        opts="$opts -d ${delay}"
+        delay_flag=true
+        ;;
+    esac
+  fi
+}
+
+printKey() {
+  echo "<span color='${highlightcolor}'>($1)</span>"
+}
+
+getOptionMessage() {
+  local mesg=""
+  if ($shadow_flag); then
+    mesg="shadow on $(printKey ${shadow_key}) |"
+  else
+    mesg="shadow off $(printKey ${shadow_key}) |"
+  fi
+  
+  if ($copy_flag); then
+    mesg="$mesg copy on $(printKey ${copy_key}) |"
+  else
+    mesg="$mesg copy off $(printKey ${copy_key}) |"
+  fi
+
+  if ($delay_flag); then
+    mesg="$mesg delay ${delay}s $(printKey ${delay_key})"
+  else
+    mesg="$mesg delay off $(printKey ${delay_key})"
+  fi
+
+  echo $mesg
+}
+
+main() {
+  mesg=" <b>Take a screenshot:</b>
+$(getOptionMessage)"
+
+  choice=$(echo -n "|濾|类" | _rofi -mesg "${mesg}" \
+    -kb-custom-1 "${shadow_key}" -kb-custom-2 "${copy_key}" -kb-custom-3 "${delay_key}")
+  rofi_retval=$?
+
+  case "$rofi_retval" in
+    1) exit 1 ;;
+    10) toggleShadow && main ;;
+    11) toggleCopy && main ;;
+    12) toggleDelay && main ;;
+    0)
+      # this pause is introduced to let rofi disappear before a screenshot is taken
+      sleep 0.3
+      case "$choice" in
+        )
+          ${screenshot} ${opts} f
+          ;;
+        濾)
+          ${screenshot} ${opts} s
+          ;;
+        类)
+          ${screenshot} ${opts} w
+          ;;
+      esac
+      ;;
+    *) exit 1
+  esac
+}
+
+main

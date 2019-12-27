@@ -1,3 +1,4 @@
-#!/usr/bin/env dash
+#!/usr/bin/env bash
 
-/usr/bin/xwinwrap -b -fs -sp -ov -- /usr/bin/mpv -wid WID --no-config --no-border --vd-lavc-fast --x11-bypass-compositor=no $1
+/usr/bin/xwinwrap -b -argb -un -s -g "$(xrandr --nograb --current | awk '/\*/ {printf $1; exit}')+0+0" -ni -nf -fdt -- \
+  /usr/bin/mpv -wid WID --no-config --no-border --vd-lavc-fast --x11-bypass-compositor=no $1

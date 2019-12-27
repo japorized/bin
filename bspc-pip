@@ -1,39 +1,79 @@
 #!/usr/bin/env bash
+# Definition of picture-in-picture mode
+# 1. Should be a video player
+# 2. Should be stickied
+# 3. Should be floating
+# 4. Should be on top layer (above)
 
-# Check for tiling status
-bspc query -N -n focused.tiled > /dev/null
+is_video() {
+  # Check for WM_NAME
+  local wmname=$(xprop WM_NAME -id $(xdotool getactivewindow) \
+    | cut -d'=' -f2 \
+    | tr '[:upper:]' '[:lower:]')
+  case "${wmname}" in
+    *firefox* | *mpv*)
+      local is_video=true
+      ;;
+    *)
+      local is_video=false
+  esac
 
-if [ $? -eq 0 ]; then
-  window_state="tiled"
-else
-  window_state="floating"
-fi
+  echo $is_video
+}
 
-# Check for sticky status
-bspc query -N -n focused.sticky > /dev/null
+is_in_pip_mode() {
+  # Check for floating status
+  bspc query -N -n focused.floating > /dev/null
+  if [ $? -eq 0 ]; then
+    local is_floating=true
+  else
+    local is_floating=false
+  fi
 
-if [ $? -eq 0 ]; then
-  sticky_state="sticky"
-else
-  sticky_state="not-sticky"
-fi
+  # Check for sticky status
+  bspc query -N -n focused.sticky > /dev/null
 
-if [ "$window_state" = "tiled" ] || [ "$sticky_state" = "sticky" ]; then
-  bspc node -t floating -g sticky=on -l above
-  
-  resolution="$(xrandr --nograb --current | awk '/\*/ {printf $1; exit}')"
-  monitor_width="${resolution/x*}"
-  monitor_height="${resolution#*x}"
-  wanted_width="$((monitor_width / 5))"
-  wanted_height="$((monitor_height / 5))"
-  cur_width="$(returnWindowInfo.sh w)"
-  cur_height="$(returnWindowInfo.sh h)"
-  diff_width="$(( cur_width - wanted_width ))"
-  diff_height="$(( cur_height - wanted_height ))"
+  if [ $? -eq 0 ]; then
+    local is_sticky=true
+  else
+    local is_sticky=false
+  fi
 
-  bspc node -z bottom_right "-$diff_width" "-$diff_height"
-  
-  ~/.bin/bspc-smartmove bottom-right
-else
-  bspc node -t ~floating -g sticky=off -l normal
+  # Check if layer is above
+  bspc query -N -n focused.above > /dev/null
+
+  if [ $? -eq 0 ]; then
+    local is_above=true
+  else
+    local is_above=false
+  fi
+
+  if ($(is_video) && $is_floating && $is_sticky && $is_above); then
+    echo true
+  else
+    echo false
+  fi
+}
+
+if ($(is_video)); then
+  if ! ($(is_in_pip_mode)); then
+    bspc node --state floating 
+    bspc node --flag sticky=on 
+    bspc node --layer above
+
+    resolution=($(getRes))
+    monitor_width=${resolution[0]}
+    monitor_height=${resolution[1]}
+    wanted_width="$((monitor_width / 4))"
+    wanted_height="$((monitor_height / 4))"
+    cur_width="$(returnWindowInfo.sh w)"
+    cur_height="$(returnWindowInfo.sh h)"
+    diff_width="$(( cur_width - wanted_width ))"
+    diff_height="$(( cur_height - wanted_height ))"
+
+    bspc node -z bottom_right "-$diff_width" "-$diff_height"
+    ~/.bin/bspc-smartmove top-right
+  else
+    bspc node -t ~floating -g sticky=off -l normal
+  fi
 fi

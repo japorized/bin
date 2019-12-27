@@ -11,7 +11,7 @@ _rofi() {
     -mesg "<span face='ClearSans' font_size='x-large' weight='bold'>${rofi_greeting}</span>"
 }
 
-choice=$(echo "\
+choice=$(echo -n "\
  termite| thunar| geary| firefox| nvim-qt| steam| telegram| rofiwpg|ア rofianime| zathura| obs| flowblade| font viewer\
 " | _rofi)
 

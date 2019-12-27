@@ -18,75 +18,84 @@ delete="Alt+d"
 openinfm="Alt+t"
 highlightcolor="Aqua"
 
+# Configuration
 . "$HOME/.config/rofi/script-configs/rofiwpg.conf"
 
-copentag="<span color='${highlightcolor}'>"
-cclosetag="</span>"
-helpmsg="Actions:
-${copentag}(Alt+t)${cclosetag} edit templates | ${copentag}(Alt+s)${cclosetag} edit schemes
-${copentag}(Alt+c)${cclosetag} edit config | ${copentag}(Alt+d)${cclosetag} delete theme"
+printKey() {
+  echo -n "<b><span color='${highlightcolor}'>($1)</span></b>"
+}
 
 _rofi() {
   rofi -dmenu -markup-rows -i -p "${wpgprompt}" "$@"
 }
 
-edittemplate() {
-  choice=$(${wpgc} -lt | _rofi -kb-custom-1 "${openinfm}" -mesg "${copentag}${openinfm}${cclosetag} open templates in file manager")
-  val=$?
+helpmsg="Actions:
+$(printKey ${template}) edit templates | $(printKey ${schemes}) edit schemes
+$(printKey ${config}) edit config    | $(printKey ${delete}) delete theme"
 
-  case "$val" in
-    0)
-      if [ -n "$choice" ]; then
-        ${editor} ${wpgcfgpath}/templates/${choice}
-      fi
-      ;;
+edittemplate() {
+  choice=$(${wpgc} -lt | _rofi -kb-custom-1 "${openinfm}" \
+    -mesg "$(printKey ${openinfm}) open templates in file manager")
+  retval=$?
+
+  case "$retval" in
     10)
       ${fm} ${wpgcfgpath}/templates/
+      ;;
+    1) exit 0 ;;
+    0)
+      ${editor} ${wpgcfgpath}/templates/${choice}
       ;;
   esac
 }
 
 editschemes() {
   choice=$(ls ${wpgcfgpath}/schemes | _rofi)
+  retval=$?
 
-  if [ -n "$choice" ]; then
-    ${editor} ${wpgcfgpath}/schemes/${choice}
-  fi
-}
-
-themechanger() {
-  choice=$(${wpgc} -l | _rofi -mesg "${helpmsg}" -kb-custom-1 "${template}" -kb-custom-2 "${schemes}" -kb-custom-3 "${config}" -kb-custom-4 "${delete}")
-  val=$?
-  
-  if [ $val -eq 0 ]; then
-    echo ${choice}
-  else
-    echo $val
-  fi
+  case "$retval" in
+    1) exit 0 ;;
+    0)
+      ${editor} ${wpgcfgpath}/schemes/${choice}
+      ;;
+  esac
 }
 
 deletetheme() {
   choice=$(${wpgc} -l | _rofi -mesg "Which theme to delete?")
-  confirm=$(echo "No|Yes" | _rofi -sep '|' -mesg "Really delete ${choice}?")
-  if [ "$confirm" = "Yes" ]; then
-    ${wpgc} -d ${choice}
-    rofi -e "${choice} theme deleted"
-  fi
+  retval=$?
+  
+  case "$retval" in
+    1) exit 0 ;;
+    0)
+      confirm=$(echo "No|Yes" | _rofi -sep '|' -mesg "Really delete ${choice}?")
+      retval=$?
+      case "$retval" in
+        1) exit 0 ;;
+        0)
+          if [ "$confirm" = "Yes" ]; then
+            ${wpgc} -d ${choice}
+            rofi -e "${choice} theme deleted"
+          fi
+          ;;
+      esac
+  esac
 }
 
 main() {
-  ret=$(themechanger)
-  if [ "$ret" = "10" ]; then
-    edittemplate
-  elif [ "$ret" = "11" ]; then
-    editschemes
-  elif [ "$ret" = "12" ]; then
-    ${editor} ${wpgcfgpath}/wpg.conf
-  elif [ "$ret" = "13" ]; then
-    deletetheme
-  else
-    ${wpgc} -s ${ret}
-  fi
+  choice=$(${wpgc} -l | _rofi -mesg "${helpmsg}" \
+    -kb-custom-1 "${template}" -kb-custom-2 "${schemes}" \
+    -kb-custom-3 "${config}" -kb-custom-4 "${delete}")
+  retval=$?
+
+  case "$retval" in
+    10) edittemplate ;;
+    11) editschemes ;;
+    12) ${editor} ${wpgcfgpath}/wpg.conf ;;
+    13) deletetheme ;;
+    1) exit 0 ;;
+    0) ${wpgc} -s ${choice}
+  esac
 }
 
 main

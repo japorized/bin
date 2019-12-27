@@ -2,13 +2,13 @@
 
 mpc_status() {
   status=$(mpc | sed -n 2p | awk -F " " '{print $1}')
-  echo ${status}
+  echo ${status} | sed "s/\&/\&amp;/g"
 }
 
 _rofi() {
   rofi -sep '|' -columns 8 -lines 1 -disable-history true -cycle true \
     -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 550 -height 20 \
-    -dmenu -font "Hack Nerd Font 10" -mesg "$(mpc_status) $(mpc current)"
+    -dmenu -font "Hack Nerd Font 10" -mesg "$(mpc_status) $(mpc current | sed 's/\&/\&amp;/g')"
 }
 
 inform() {
@@ -16,7 +16,7 @@ inform() {
   show-lemonbar nowplaying
 }
 
-choice=$(echo "||||凌||綾|||" | _rofi)
+choice=$(echo -n "||||凌||綾|||" | _rofi)
 
 case "$choice" in
   )
@@ -29,7 +29,7 @@ case "$choice" in
     mpc next && inform
     ;;
   )
-    vol=$(echo "100|75|50|25|+5|-5" | _rofi)
+    vol=$(echo -n "100|75|50|25|+5|-5" | _rofi)
     mpc volume ${vol}
     ;;
   )
@@ -42,7 +42,7 @@ case "$choice" in
     mpc single && inform
     ;;
   )
-    cross=$(echo "0|1|5|7|10|15" | _rofi)
+    cross=$(echo -n "0|1|5|7|10|15" | _rofi)
     mpc crossfade ${cross}
     ;;
   )

@@ -18,7 +18,7 @@ _rofi() {
     -kb-custom-6 "d" -kb-custom-7 "z" -kb-custom-8 "x" -kb-custom-9 "c"
 }
 
-choice=$(echo "q|a|z|w|s|x|e|d|c" | _rofi)
+choice=$(echo -n "q|a|z|w|s|x|e|d|c" | _rofi)
 choice=$?
 
 case $choice in
@@ -32,13 +32,13 @@ case $choice in
     $bspcsm top-right
     ;;
   a|13)
-    $bspcsm left-center
+    $bspcsm center-left
     ;;
   s|14)
     $bspcsm center
     ;;
   d|15)
-    $bspcsm right-center
+    $bspcsm center-right
     ;;
   z|16)
     $bspcsm bottom-left

@@ -1,59 +1,59 @@
 #!/bin/bash
 # Set window to floating mode, then snap it to top right corner
 
-resolution="$(xrandr --nograb --current | awk '/\*/ {printf $1; exit}')"
-monitor_width="${resolution/x*}"
-monitor_height="${resolution#*x}"
+resolution=($(getRes))
+monitor_width=${resolution[0]}
+monitor_height=${resolution[1]}
 
-# query window status
-bspc query -N focused.tiled -d focused > /dev/null
+isFocusedWindowFloating() {
+  bspc query -N -n focused.floating > /dev/null
+  if [ $? -eq 0 ]; then
+    echo true
+  else
+    echo false
+  fi
+}
 
-if [ $? -eq 0 ]; then
-  window_state="tiled"
-else
-  window_state="floating"
-fi
-
-case $1 in
+case "$1" in
   up)
-    if [ "$window_state" = "tiled" ]; then
-      bspc node -s north
-    else
+    if ($(isFocusedWindowFloating)); then
       bspc node -v 0 -20
+    else
+      bspc node -s north
     fi
     ;;
   down)
-    if [ "$window_state" = "tiled" ]; then
-      bspc node -s south
-    else
+    if ($(isFocusedWindowFloating)); then
       bspc node -v 0 20
+    else
+      bspc node -s south
     fi
     ;;
   left)
-    if [ "$window_state" = "tiled" ]; then
-      bspc node -s west
-    else
+    if ($(isFocusedWindowFloating)); then
       bspc node -v -20 0
+    else
+      bspc node -s west
     fi
     ;;
   right)
-    if [ "$window_state" = "tiled" ]; then
-      bspc node -s east
-    else
+    if ($(isFocusedWindowFloating)); then
       bspc node -v 20 0
+    else
+      bspc node -s east
     fi
     ;;
 
   # These should only be used by floating windows
   top-left)
-    if [ "$window_state" = "floating" ]; then
+    if ($(isFocusedWindowFloating)); then
       window_xpos=$(returnWindowInfo.sh x)
       window_ypos=$(returnWindowInfo.sh y)
       bspc node -v "-$window_xpos" "-$window_ypos"
     fi
     ;;
   top-right)
-    if [ "$window_state" = "floating" ]; then
+    if ($(isFocusedWindowFloating)); then
       window_width=$(returnWindowInfo.sh w)
       window_xpos=$(returnWindowInfo.sh x)
       window_ypos=$(returnWindowInfo.sh y)
@@ -61,7 +61,7 @@ case $1 in
     fi
     ;;
   bottom-left)
-    if [ "$window_state" = "floating" ]; then
+    if ($(isFocusedWindowFloating)); then
       window_height=$(returnWindowInfo.sh h)
       window_xpos=$(returnWindowInfo.sh x)
       window_ypos=$(returnWindowInfo.sh y)
@@ -70,7 +70,7 @@ case $1 in
     fi
     ;;
   bottom-right)
-    if [ "$window_state" = "floating" ]; then
+    if ($(isFocusedWindowFloating)); then
       window_width=$(returnWindowInfo.sh w)
       window_height=$(returnWindowInfo.sh h)
       window_xpos=$(returnWindowInfo.sh x)
@@ -80,7 +80,7 @@ case $1 in
     fi
     ;;
   top-center)
-    if [ "$window_state" = "floating" ]; then
+    if ($(isFocusedWindowFloating)); then
       window_width=$(returnWindowInfo.sh w)
       window_xpos=$(returnWindowInfo.sh x)
       window_ypos=$(returnWindowInfo.sh y)
@@ -90,7 +90,7 @@ case $1 in
     fi
     ;;
   bottom-center)
-    if [ "$window_state" = "floating" ]; then
+    if ($(isFocusedWindowFloating)); then
       window_width=$(returnWindowInfo.sh w)
       window_height=$(returnWindowInfo.sh h)
       window_xpos=$(returnWindowInfo.sh x)
@@ -100,8 +100,8 @@ case $1 in
       bspc node -v "$diff_x" "$(( monitor_height - window_height - window_ypos ))"
     fi
     ;;
-  left-center)
-    if [ "$window_state" = "floating" ]; then
+  center-left)
+    if ($(isFocusedWindowFloating)); then
       window_height=$(returnWindowInfo.sh h)
       window_xpos=$(returnWindowInfo.sh x)
       window_ypos=$(returnWindowInfo.sh y)
@@ -110,19 +110,8 @@ case $1 in
       bspc node -v "-$window_xpos" "$diff_y"
     fi
     ;;
-  right-center)
-    if [ "$window_state" = "floating" ]; then
-      window_width=$(returnWindowInfo.sh w)
-      window_height=$(returnWindowInfo.sh h)
-      window_xpos=$(returnWindowInfo.sh x)
-      window_ypos=$(returnWindowInfo.sh y)
-      offset_center_y="$(( monitor_height / 2 - window_height / 2 ))"
-      diff_y="$(( offset_center_y - window_ypos ))"
-      bspc node -v "$(( monitor_width - window_width - window_xpos ))" "$diff_y"
-    fi
-    ;;
   center)
-    if [ "$window_state" = "floating" ]; then
+    if ($(isFocusedWindowFloating)); then
       window_width=$(returnWindowInfo.sh w)
       window_height=$(returnWindowInfo.sh h)
       window_xpos=$(returnWindowInfo.sh x)
@@ -132,6 +121,17 @@ case $1 in
       offset_center_y="$(( monitor_height / 2 - window_height / 2 ))"
       diff_y="$(( offset_center_y - window_ypos ))"
       bspc node -v "$diff_x" "$diff_y"
+    fi
+    ;;
+  center-right)
+    if ($(isFocusedWindowFloating)); then
+      window_width=$(returnWindowInfo.sh w)
+      window_height=$(returnWindowInfo.sh h)
+      window_xpos=$(returnWindowInfo.sh x)
+      window_ypos=$(returnWindowInfo.sh y)
+      offset_center_y="$(( monitor_height / 2 - window_height / 2 ))"
+      diff_y="$(( offset_center_y - window_ypos ))"
+      bspc node -v "$(( monitor_width - window_width - window_xpos ))" "$diff_y"
     fi
     ;;
 esac

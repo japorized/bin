@@ -3,6 +3,8 @@
 # config
 downloaddir=$HOME/Downloads/builds
 rofioption="-lines 10 -yoffset -20 -width 80"
+terminal=$(which termite)
+editor="$(which nvim-qt) --nofork"
 
 _rofi() {
   rofi ${rofioption} -dmenu -i -p "rofi-auracle" "$@"
@@ -26,10 +28,10 @@ build() {
   build=$(echo $buildlist | _rofi -sep "|")
   if [ -n "$build" ]; then
     cd $downloaddir/$build
-    termite -d $downloaddir/$build -e "nvim PKGBUILD"
+    ${editor} PKGBUILD
     confirm=$(echo "Yes|No" | _rofi -sep "|" -mesg "Build $build?")
     if [ "$confirm" = "Yes" ]; then
-      termite -d $downloaddir/$build -e "makepkg -si" --hold && \
+      ${terminal} -d $downloaddir/$build -e "makepkg -si" --hold && \
         notify-send "rofi-auracle" "Build complete for $build."
     fi
   fi
@@ -131,7 +133,7 @@ main() {
       search info
       ;;
     "goto build dir")
-      termite -d $downloaddir
+      ${terminal} -d $downloaddir
       ;;
   esac
 }

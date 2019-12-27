@@ -8,13 +8,20 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 * `animatebg` - `xwinwrap, mpv`
 * `backup-pkglist.sh` - `pacman`
 * `bspc-pip` - `bspwm, xrandr, bspc-smartmove`
-* `bspc-smartmove` - `bspwm, xrandr, bash, returnWindowInfo.sh`
+* `bspc-rofi-hidden-windows` - `rofi, bspwm, xtitle, xprop`
+* `bspc-rofi-node-to-node` - `rofi, bspwm, xtitle, xprop`
+* `bspc-smartmove` - `bspwm, xrandr, bash, returnWindowInfo.sh, getRes`
+* `cheat-sh-download.sh` - `curl`
 * `cleandekstop.sh` - `lemonbar`
 * `color.sh` - `bash`
 * `displaysleep` - `xset`
+* `download-list.sh` - `wget, notify-send`
 * `duck` - `rofi, xargs`
+* `gestures.sh` - `xprop, xdotool`
+* `getRes` - `xrandr, awk`
 * `gifresizer` - `gifsicle, xrandr`
 * `hex2rgba`
+* `horribledl.sh` - `xmlsstarlet, curl, fzf, aria2c`
 * `iro` - `xcolor, feh, imagemagick, xclip (changable)`
 * `move-lemonbar-to-back.sh` - `xdotool`
 * `mv-mybin-to-repo.sh` - `[none]`
@@ -33,8 +40,8 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 * `rofi-nerdfonts` - `rofi`
 * `rofi-netctl` - `rofi, netctl`
 * `rofi-powermenu` - `rofi, slock, displaysleep, cleandesktop.sh, bspwm`
-* `rofi-scrot` - `rofi, ss-with-preview.sh`
-* `rofi-scrot-action` - `rofi, zenity`
+* `rofi-screenshot` - `rofi, screenshot.sh`
+* `rofi-screenshot-action` - `rofi, zenity, maim`
 * `rofi-startmenu` - `rofi`
 * `rofi-sxhkd-cheatsheet` - `rofi, sxhkd, awk`
 * `rofi-systemctl-user` - `rofi, systemd`
@@ -46,7 +53,7 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 * `show-lemonbar` - `lemonbar`
 * `show-song-cover.sh` - `mpd, mpc, imagemagick`
 * `song-change-notify.sh` - `libnotify, mpc`
-* `ss-with-preview.sh` - `imagemagick, n30f, lemonbar, scrot, gimp`
+* `screenshot.sh` - `maim, imagemagick, n30f, ffplay, imagemagick, getRes, xclip`
 * `st-tmux` - `st, tmux`
 * `surf-open.sh` - `surf, tabbed`
 * `svg2png` - `inkscape`

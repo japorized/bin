@@ -1,36 +1,114 @@
 #!/usr/bin/env bash
 
+# keybindings
+texted_mode="Alt+t"
+copy_mode="Alt+c"
+clean_mode="Alt+n"
+provide_mode="Alt+p"
+clear_palettes="Alt+C"
+clean_dir="Alt+N"
+
+highlightcolor='Aqua'
+
+# load configs
+. "$HOME/.config/rofi/script-configs/rofi-iro.conf"
+
+opts=""
+
 _rofi() {
   rofi -sep '|' -columns 8 -lines 1 -disable-history true -cycle true \
-    -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 1000 -height 20 \
-    -dmenu -font "Hack Nerd Font 10" -mesg " iro" "$@"
+    -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 400 -height 20 \
+    -dmenu -font "Hack Nerd Font 10" "$@"
 }
 
-_rofi_takeval() {
-  promptval=$1
-  shift
-  rofi -dmenu -i -p "${promptval}" \
-  -width 300 -height 10 -line 0 "$@"
+activateTextedMode() {
+  opts=""
 }
 
-provideColor() {
-  value=$(_rofi_takeval "$1 code")
-  exitcode=$?
-  case "$exitcode" in
+activateCopyMode() {
+  opts="-c"
+}
+
+activateCleanMode() {
+  opts="-n"
+}
+
+activateProvideMode() {
+  opts="-p"
+}
+
+printKey() {
+  echo "<span color='${highlightcolor}'>($1)</span>"
+}
+
+getOptionMessage() {
+  local mesg=""
+  case "${opts}" in
+    "") mesg=" texted mode" ;;
+    "-c") mesg=" copy mode" ;;
+    "-n") mesg=" clean mode" ;;
+    "-p") mesg=" provide mode" ;;
+  esac
+
+  echo $mesg
+}
+
+💬() {
+  local mesg=""
+  case "${opts}" in
+    "") mesg=" $(printKey ${copy_mode}) |  $(printKey ${clean_mode}) |  $(printKey ${provide_mode})" ;;
+    "-c") mesg=" $(printKey ${texted_mode}) |  $(printKey ${clean_mode}) |  $(printKey ${provide_mode})" ;;
+    "-n") mesg=" $(printKey ${texted_mode}) |  $(printKey ${copy_mode}) |  $(printKey ${provide_mode})" ;;
+    "-p") mesg=" $(printKey ${texted_mode}) |  $(printKey ${copy_mode}) |  $(printKey ${clean_mode})" ;;
+  esac
+
+  echo $mesg
+}
+
+main() {
+  choices="hex|rgb"
+  mesg="🎨 <b>iro</b> - $(getOptionMessage)
+$(💬)
+$(printKey ${clear_palettes}) to clear palettes
+$(printKey ${clean_dir}) to clean cache"
+  choice=$(echo -n "${choices}" | _rofi \
+    -mesg "${mesg}"  \
+    -kb-custom-1 "${texted_mode}" -kb-custom-2 "${copy_mode}" -kb-custom-3 "${clean_mode}" \
+    -kb-custom-4 "${provide_mode}" -kb-custom-5 "${clear_palettes}" -kb-custom-6 "${clean_dir}")
+  retval=$?
+  case "${retval}" in
     1) exit 0 ;;
-    *) iro -p $1 $value
+    10) activateTextedMode && main ;;
+    11) activateCopyMode && main ;;
+    12) activateCleanMode && main ;;
+    13) activateProvideMode && main ;;
+    14) iro clear ;;
+    15) iro clean ;;
+    0)
+      if [ ${opts} = "-p" ]; then
+        color=$(rofi -dmenu -i -p "Please provide ${choice} color")
+        retvall=$?
+        case "${retval}" in
+          0) iro ${opts} ${choice} ${color} ;;
+        esac
+      else
+        iro ${opts} ${choice}
+      fi
+      ;;
   esac
 }
 
-choice=$(echo -en "hex |rgb |hex |rgb |hex |rgb |hex  only|rgb  only|clear|clean" | _rofi)
-retval=$?
-if [ $retval != "1" ]; then
-  case "$choice" in
-    "clear" | "clean") iro "$choice" ;;
-    "hex " | "rgb ") iro "$(echo $choice | cut -d' ' -f1)" ;;
-    "hex " | "rgb ") iro -c "$(echo $choice | cut -d' ' -f1)" ;;
-    "hex " | "rgb ") iro -n "$(echo $choice | cut -d' ' -f1)" ;;
-    "hex  only") provideColor "hex" ;;
-    "rgb  only") provideColor "rgb" ;;
-  esac
-fi
+main
+
+# choice=$(echo -en "hex |rgb |hex |rgb |hex |rgb |hex  only|rgb  only|clear|clean" | _rofi)
+# retval=$?
+# if [ $retval != "1" ]; then
+#   case "$choice" in
+#     "clear" | "clean") iro "$choice" ;;
+#     "hex " | "rgb ") iro "$(echo $choice | cut -d' ' -f1)" ;;
+#     "hex " | "rgb ") iro -c "$(echo $choice | cut -d' ' -f1)" ;;
+#     "hex " | "rgb ") iro -n "$(echo $choice | cut -d' ' -f1)" ;;
+#     "hex  only") provideColor "hex" ;;
+#     "rgb  only") provideColor "rgb" ;;
+#   esac
+# fi

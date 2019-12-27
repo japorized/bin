@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Dependencies:
+# xrandr, awk
+
+usage() {
+  echo "  Usage       : getRes [OPTIONS]
+  Description : Get monitor resolution
+  
+  Options:
+  <no option> Get monitor resolution as an array
+  -w, -x      Get monitor width only
+  -h, -y      Get monitor height only
+  -u          Show this help message"
+}
+
+resolution=$(xrandr --nograb --current | awk '/\*/ {printf $1; exit}')
+
+if [ -z "$@" ]; then
+  res=(${resolution/x*} ${resolution#*x})
+  echo ${res[@]}
+fi
+
+while getopts "wxhyu" opt; do
+  case "${opt}" in
+    w|x)
+      echo ${resolution/x*}
+      ;;
+    h|y)
+      echo ${resolution#*x}
+      ;;
+    u)
+      usage
+      ;;
+    *|\?)
+      usage
+      exit 1
+  esac
+done

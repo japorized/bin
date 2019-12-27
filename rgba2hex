@@ -1,5 +1,34 @@
 #!/usr/bin/env bash
 
+H_flag=false
+
+usage() {
+  echo "
+  Usage: rgba2hex [OPTIONS] [RGBA CODE]
+
+  OPTIONS:
+  -H      remove hashtag from output
+
+  RGBA CODE example:
+  rgb(255, 12, 0)
+  rgba(219, 200, 15, 0.2)"
+}
+
+while getopts "Hh" opt; do
+  case "${opt}" in
+    H) H_flag=true ;;
+    h)
+      usage
+      exit 0
+      ;;
+    \?)
+      usage
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
 round() {
   echo $(printf %.$2f $(echo "scale=$2;(((10^$2)*$1)+0.5)/(10^$2)" | bc))
 }
@@ -27,16 +56,41 @@ rawcode=$(echo $1 | cut -d '(' -f2- | tr -d ')')
 rawred=$(echo $rawcode | cut -d ',' -f1)
 rawgreen=$(echo $rawcode | cut -d ',' -f2)
 rawblue=$(echo $rawcode | cut -d ',' -f3)
-red=$(printf '%x' $rawred)
-green=$(printf '%x' $rawgreen)
-blue=$(printf '%x' $rawblue)
+if [ ${#rawred} == 1 ]; then
+  red=$(printf '0%x' $rawred)
+else
+  red=$(printf '%x' $rawred)
+fi
+if [ ${#rawgreen} == 1 ]; then
+  green=$(printf '0%x' $rawgreen)
+else
+  green=$(printf '%x' $rawgreen)
+fi
+if [ ${#rawblue} == 1 ]; then
+  blue=$(printf '0%x' $rawblue)
+else
+  blue=$(printf '%x' $rawblue)
+fi
 
 if [ $has_alpha = true ]; then
   rawalpha=$(echo $rawcode | cut -d ',' -f4)
   rawalpha=$(round $(echo "$rawalpha * 255" | bc) 0)
-  alpha=$(printf '%x' $rawalpha)
-  echo "#$red$green$blue$alpha"
+  if [ ${#rawalpha} == 1 ]; then
+    alpha=$(printf '0%x' $rawalpha)
+  else
+    alpha=$(printf '%x' $rawalpha)
+  fi
+
+  if ($H_flag); then
+    echo -n "$red$green$blue$alpha"
+  else
+    echo -n "#$red$green$blue$alpha"
+  fi
 else
-  echo "#$red$green$blue"
+  if ($H_flag); then
+    echo -n "$red$green$blue"
+  else
+    echo -n "#$red$green$blue"
+  fi
 fi
 

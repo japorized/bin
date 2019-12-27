@@ -97,7 +97,7 @@ getEpisode() {
       if [ -n $nextEp ]; then
         # try to put next episode as the first choice
         curEp=$(echo $(getEpNum "${episodearr[$idx]}") | bc)
-        if [ $curEp != $nextEp ]; then
+        if [ "$curEp" != "$nextEp" ]; then
           episodelist="$episodelist|${episodearr[$idx]}"
         else
           episodelist="${episodearr[$idx]}|$episodelist"
@@ -109,7 +109,8 @@ getEpisode() {
   done
 
   rofimsg="<i><b>Last Episode:</b> $lastWatchedEp</i>
-<span color='${highlightcolor}'>${goback}</span> to go back | <span color='${highlightcolor}'>${useRenamer}</span> to automagically rename certain files | <span color='${highlightcolor}'>${openInFM}</span> open in file manager"
+<span color='${highlightcolor}'>${goback}</span> to go back | <span color='${highlightcolor}'>${useRenamer}</span> to automagically rename certain files
+<span color='${highlightcolor}'>${openInFM}</span> open in file manager"
 
   episode=$(echo $episodelist \
     | _rofi -mesg "$rofimsg" ${dmenuopts} \
@@ -159,6 +160,7 @@ main() {
   cd "$animeRes"
 
   epiRes=$(getEpisode)
+  echo $epiRes
   if [ -z "$epiRes" ]; then
     exit 0
   fi

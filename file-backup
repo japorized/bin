@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+usage() {
+  echo -n "  Usage: file-backup [OPTIONS]
+  Note: Requires root privileges to run
+
+  OPTIONS:
+  -s    Source directories (space-separated)
+  -d    Destination directory
+
+  DEFAULTS:
+  -s    .config Documents Games Music Picturse Videos
+  -d    /mnt
+
+  EXAMPLE:
+  # Backup directories .config and Documents to /tmp
+  file-backup -s \".config Documents\" -d /tmp
+  "
+}
+
+srcs=(.config Documents Games Music Pictures Videos)
+dest=/mnt
+home=/home/japorized
+filterfile=$home/dotfiles/install/rsync-filter.txt
+
+while getopts "d:s:h" opt; do
+  case "$opt" in
+    s)
+      srcs=(${OPTARG})
+      ;;
+    d)
+      dest=${OPTARG}
+      ;;
+    h)
+      usage
+      exit 0
+      ;;
+    \?)
+      usage
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+
+_rsync() {
+  rsync --archive --human-readable --progress \
+    --filter=". ${filterfile}" "$@"
+}
+
+echo "=== Beginning backup ==="
+for src in ${srcs[@]}; do
+  echo "  ~~~ Backing up from $home/$src to $dest ~~~"
+  _rsync $home/$src $dest
+done

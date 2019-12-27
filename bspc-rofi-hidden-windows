@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Dependencies: xprop, xtitle, bspwm
+
+xprop_wmclass_prefix="WM_CLASS(STRING) = "
+xprop_wmname_prefix="WM_NAME(STRING) = "
+
+_rofi() {
+  rofi -dmenu -i -p "Select hidden node" -sep "|"
+}
+
+_bspcunhide() {
+  bspc node "$1" -g hidden
+}
+
+windowtitles=""
+for node in $(bspc query --nodes --node .hidden); do
+  nodeclass=$(xprop WM_CLASS -id $node)
+  nodeclass=${nodeclass#"$xprop_wmclass_prefix"}
+  nodeclass=$(echo -n $nodeclass | cut -d, -f2 | sed s/\"//g)
+  # nodename=$(xprop WM_NAME -id $node)
+  # nodename=${nodename#"$xprop_wmname_prefix"}
+  # nodename=$(echo -n $nodename | sed s/\"//g)
+  nodename=$(xtitle $node)
+  if [ -n "$windowtitles" ]; then
+    windowtitles="${windowtitles}|${nodeclass} - ${nodename} [$node]"
+  else
+    windowtitles="${nodeclass} - ${nodename} [$node]"
+  fi
+done
+
+choice=$(echo -n ${windowtitles} | _rofi)
+rofival=$?
+
+case ${rofival} in
+  0)
+    chosennode=$(echo $choice | cut -d[ -f2 | tr -d "]")
+    _bspcunhide ${chosennode}
+    ;;
+  1)
+    exit 0
+    ;;
+  *)
+    exit 1
+    ;;
+esac

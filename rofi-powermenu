@@ -24,7 +24,7 @@ case "$choice" in
     systemctl suspend
     ;;
   )
-    choice=$(echo "No|Yes" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Logging out. Are you sure?</span>")
+    choice=$(echo -n "No|Yes" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Logging out. Are you sure?</span>")
     if [ "$choice" = "Yes" ]; then
       cleandesktop.sh
       play_exit_sound
@@ -32,15 +32,16 @@ case "$choice" in
     fi
     ;;
   )
-    choice=$(echo "No|Yes" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Rebooting. Are you sure?</span>")
+    choice=$(echo -n "No|Yes" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Rebooting. Are you sure?</span>")
     if [ "$choice" = "Yes" ]; then
-      play_exit_sound
+      cleandesktop.sh
       systemctl reboot
     fi
     ;;
   )
-    choice=$(echo "No|Yes" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Powering off. Are you sure?</span>")
+    choice=$(echo -n "No|Yes" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Powering off. Are you sure?</span>")
     if [ "$choice" = "Yes" ]; then
+      cleandesktop.sh
       play_exit_sound
       systemctl poweroff
     fi

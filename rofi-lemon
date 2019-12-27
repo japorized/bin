@@ -3,32 +3,21 @@
 _rofi() {
   rofi -theme $HOME/.config/rofi/theme/rofi-simplemenu.rasi \
     -sep '|' ${rofioptions} -dmenu -i -mesg "Show indicator" \
-    -kb-custom-1 "s" -kb-custom-2 "w" -kb-custom-3 "W"
+    -kb-custom-1 "n" -kb-custom-2 "w" -kb-custom-3 "W"
 }
 
-choice=$(echo "Weather|Window status" | _rofi)
+choice=$(echo -n "Now Playing|Weather|Window status" | _rofi)
 val=$?
 
-if [ $val = 0 ]; then
-  case $choice in
-    "Weather"|11)
-      show-lemonbar weather
-      ;;
-    "Window status"|12)
-      show-lemonbar bspwm-window-info
-      ;;
-    *)
-      ;;
-  esac
-elif [ $val != 1 ]; then
-  case $val in
-    "Weather"|11)
-      show-lemonbar weather
-      ;;
-    "Window status"|12)
-      show-lemonbar bspwm-window-info
-      ;;
-    *)
-      ;;
-  esac
-fi
+case ${val} in
+  1) exit 0 ;;
+  10) show-lemonbar nowplaying ;;
+  11) show-lemonbar weather ;;
+  12) show-lemonbar bspwm-window-info ;;
+  0)
+    case $choice in
+      "Now Playing") show-lemonbar nowplaying ;;
+      "Weather") show-lemonbar weather ;;
+      "Window status") show-lemonbar bspwm-window-info ;;
+    esac
+esac
