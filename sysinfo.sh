@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # sysinfo script
 
 bold="\x1B[1m"

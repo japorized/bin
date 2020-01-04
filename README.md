@@ -57,6 +57,8 @@ See also: [`japorized/dotfiles`](https://gitlab.com/japorized/dotfiles)
 * `st-tmux` - `st, tmux`
 * `surf-open.sh` - `surf, tabbed`
 * `svg2png` - `inkscape`
+* `sysinfo.sh` - `[none]`
+* `sys-packinfo.sh` - `pacman, pacman-contrib, fzf`
 * `tabbed-zathura` - `zathura, tabbed`
 * `termite-tmux` - `termite, tmux`
 * `termite-vim-simplenote` - `termite, vim` (with [simplenote.vim](https://github.com/mrtazz/simplenote.vim))

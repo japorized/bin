@@ -5,6 +5,7 @@ baseurl="http://www.horriblesubs.info/rss.php"
 res="720" # default resolution
 btdler=/usr/bin/aria2c
 filter=""
+fzf_options="--reverse"
 
 if [ -n "$XDG_DATA_HOME" ]; then
   storage=$XDG_DATA_HOME/horribledl
@@ -31,6 +32,10 @@ updateRSS() {
   echo "Downloading rss-${res}.xml"
   url="${baseurl}?res=${res}"
   curl "$url" > $storage/rss-${res}.xml
+}
+
+_fzf() {
+  fzf ${fzf_options}
 }
 
 f_flag=false
@@ -93,7 +98,7 @@ only_one_choice() {
 if (only_one_choice); then
   sel=$(cat $tmpshowlist)
 else
-  sel=$(cat $tmpshowlist | fzf)
+  sel=$(cat $tmpshowlist | _fzf)
 fi
 val=$?
 

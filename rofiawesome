@@ -37,10 +37,7 @@ while getopts "hutif" flag; do
     h) usage
       exit 0
       ;;
-    u)
-      u_flag=true
-      break
-      ;;
+    u) u_flag=true ;;
     t) t_flag=true ;;
     i)
       if [ "$t_flag" = false ]; then
