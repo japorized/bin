@@ -49,7 +49,7 @@ if [ "$EUID" -ne 0 ]
 fi
 
 _rsync() {
-  rsync --archive --human-readable --progress \
+  sudo rsync --archive --human-readable --progress \
     --filter=". ${filterfile}" "$@"
 }
 
