@@ -10,7 +10,7 @@ if [ -z $wpgc ]; then
 fi
 
 wpgcfgpath="$HOME/.config/wpg"
-wpgprompt="  wpgtk"
+wpgprompt=" wpgtk"
 template="Alt+t"
 schemes="Alt+s"
 config="Alt+c"
