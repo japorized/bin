@@ -1,0 +1,78 @@
+#!/usr/bin/env dash
+
+CHEAT_DIR=$XDG_DATA_HOME/cheat
+
+edit_flag=false
+download_flag=false
+delete_flag=false
+
+if [ ! -d "$CHEAT_DIR" ]; then
+  echo "Creating directory for cheatsheets at $CHEAT_DIR"
+  mkdir $CHEAT_DIR
+fi
+
+usage() {
+  echo "  Usage: cheat [options] <argument>
+
+  options:
+  -h      Show this help
+  -e      Edit cheatsheet for <argument>
+  -d      Download cheatsheet for <argument> from https://cheat.sh
+  -D      Delete cheatsheet for <argument>
+  -l      List cheatsheets"
+}
+
+_pygmentize() {
+  $(which pygmentize) -l bash "$@"
+}
+
+while getopts "edlDh" opt; do
+  case "${opt}" in
+    e) edit_flag=true ;;
+    d) download_flag=true ;;
+    D) delete_flag=true ;;
+    l)
+      ls $CHEAT_DIR
+      exit 0
+      ;;
+    h) usage && exit 0 ;;
+    \?)
+      usage
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
+if [ -z "$1" ]; then
+  echo "Must provide an argument"
+  exit 1
+fi
+
+if ($delete_flag); then
+  rm $CHEAT_DIR/$1
+  exit 0
+fi
+
+if ($download_flag); then
+  cheat-sh-download.sh "$1"
+  retval=$?
+  case "$retval" in
+    0) echo "Download successful: $1" ;;
+    *)
+      echo "Download not successful: $1"
+      exit 1
+      ;;
+  esac
+fi
+
+if ($edit_flag); then
+  $EDITOR $CHEAT_DIR/$1
+  exit 0
+fi
+
+if [ -f "$CHEAT_DIR/$1" ]; then
+  _pygmentize "$CHEAT_DIR/$1"
+else
+  echo "Cheat not found"
+fi
