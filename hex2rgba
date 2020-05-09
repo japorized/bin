@@ -18,4 +18,4 @@ else
   alpha=$(echo "scale=2; $alphahex.0 / 255" | bc)
 fi
 
-echo "rgba($red, $green, $blue, $alpha)"
+echo -n "rgba($red, $green, $blue, $alpha)"
