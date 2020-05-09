@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+systemctl --user stop mpdscribble.service megasync.service
+# refresh-indicators.sh -n

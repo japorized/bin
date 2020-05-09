@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+systemctl --user start mpdscribble.service megasync.service
+refresh-indicators.sh
