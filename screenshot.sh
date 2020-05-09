@@ -108,20 +108,36 @@ esac
 
 if ($sc_flag); then
   _maim_lq ${secondary_args} | _makeshadow "$cachefile"
-  _playshuttersound
-  _copytoclipboard -i "$cachefile"
-  exit 0
+  retval=$?
+  if [ $retval = 0 ]; then
+    _playshuttersound
+    _copytoclipboard -i "$cachefile"
+    exit 0
+  else
+    exit 1
+  fi
 elif ($c_flag); then
   _maim_lq ${secondary_args} | _copytoclipboard
-  _playshuttersound
-  exit 0
+  retval=$?
+  if [ $retval = 0 ]; then
+    _playshuttersound
+    exit 0
+  else
+    exit 1
+  fi
 elif ($s_flag); then
   _maim ${secondary_args} | _makeshadow "$enddir/$datetime.png"
+  retval=$?
 else
   _maim ${secondary_args} "$enddir/$datetime.png"
+  retval=$?
 fi
 
-_playshuttersound
+if [ $retval = 0 ]; then
+  _playshuttersound
+else
+  exit 1
+fi
 
 sleep 0.5 # pause is introduced to allow the system to write the file
 
