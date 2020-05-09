@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+
+def get_rgb_from_string(rgb_str)
+  # get rid of trailing \n and all whitespaces
+  stripped = rgb_str.chomp.gsub(" ", "")
+
+  # get substring between (...)
+  vals_str = stripped[
+    (stripped.index("(") + 1)..(stripped.index(")") - 1)
+  ]
+
+  # split by , and cast them as floats
+  vals_arr = vals_str.split(",").map { |n| n.to_f }
+
+  return vals_arr
+end
+
+def convert(percs)
+  percs = percs.map { |n| n / 255 }
+  percs_max = percs.max
+  percs_min = percs.min
+  percs_Del = percs_max - percs_min
+
+  hue = 0
+  saturation = 0
+  luminosity = (percs_max + percs_min) / 2
+
+  if percs_Del != 0
+    if luminosity < 0.5
+      saturation = percs_Del / ( percs_max + percs_min )
+    else
+      saturation = percs_Del / (2 - percs_max - percs_min)
+    end
+
+    del_RGB = percs.map { |n| ( ( ( percs_max - n ) / 2 ) + ( percs_Del / 2 ) ) / percs_Del }
+
+    case percs_max
+    when percs[0]
+      hue = (percs[1] - percs[2]) / percs_Del + (percs[1] < percs[2] ? 6 : 0)
+    when percs[1]
+      hue = (percs[2] - percs[0]) / percs_Del + 2
+    when percs[2]
+      hue = (percs[0] - percs[1]) / percs_Del + 4
+    end
+
+    hue *= 60
+  end
+
+  return [ hue, saturation, luminosity ]
+end
+
+def main
+  case ARGV.length
+  when 0
+    abort "Please pass an argument"
+  when 1
+    percs = get_rgb_from_string(ARGV[0])
+    hsl = convert(percs).map { |n| (n * 1000).round / 1000.0 }
+    print "hsl(#{hsl[0]}, #{hsl[1]}, #{hsl[2]})"
+  else
+    abort "Too many arguments"
+  end
+end
+
+main
