@@ -64,8 +64,8 @@ if ($(is_video)); then
     resolution=($(getRes))
     monitor_width=${resolution[0]}
     monitor_height=${resolution[1]}
-    wanted_width="$((monitor_width / 4))"
-    wanted_height="$((monitor_height / 4))"
+    wanted_width="$((monitor_width / 3))"
+    wanted_height="$((monitor_height / 3))"
     cur_width="$(returnWindowInfo.sh w)"
     cur_height="$(returnWindowInfo.sh h)"
     diff_width="$(( cur_width - wanted_width ))"
