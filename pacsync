@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+usage() {
+  echo "  pacsync
+  Swiss-army knife for various pacman sync operations
+
+  Usage: pacsync [FLAGS]
+
+  FLAGS:
+  <default>     Show package info (pacman -Si)
+  d             Download selected package (pacman -Ss) [requires sudo]
+  "
+}
+
+download_flag=false
+
+while getopts "hd" opt; do
+  case "${opt}" in
+    h) usage && exit 0 ;;
+    d) download_flag=true ;;
+    \?)
+      usage
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
+show_cmd="pacman -Si {}"
+
+result=$(pacman -Ssq | fzf --reverse --preview="${show_cmd}")
+retval=$?
+if [ $retval -eq 0 ]; then
+  if ($download_flag); then
+    echo "Attempt downloading package:"
+    pacman -Ss $result
+    sudo pacman -S $result
+  else
+    show_cmd=$(echo ${show_cmd} | sed "s/{}/$result/g")
+    ${show_cmd} | less
+  fi
+
+fi
