@@ -1,6 +1,7 @@
 #!/usr/bin/env dash
 
 trackpadStatus=$(cat $HOME/.cache/trackpadStatus)
+trackpadInputDeviceName="Synaptics TM3383-032"
 
 if [ "$trackpadStatus" = "on" ]
 then
