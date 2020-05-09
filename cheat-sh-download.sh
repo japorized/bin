@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 baseurl="https://cheat.sh"
-cheatStore=$HOME/.cheat
+cheatStore=$XDG_DATA_HOME/cheat
 
 download() {
   cmd=$1
   opts=$2
   if [ -n "$cmd" ]; then
-    curl "${baseurl}/${cmd}?T${opts}" > $cheatStore/${cmd}
+    curl --silent "${baseurl}/${cmd}?T${opts}" > $cheatStore/${cmd}
   else
     echo "Please provide cmd"
   fi
