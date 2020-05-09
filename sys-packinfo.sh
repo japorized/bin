@@ -44,7 +44,7 @@ case $show in
   *) show_cmd="pacman -Qi {}" ;;
 esac
 
-result=$(pacman -Qeq${add_args} | fzf --reverse --preview="${show_cmd}")
+result=$(pacman -Qq${add_args} | fzf --reverse --preview="${show_cmd}")
 retval=$?
 if [ $retval -eq 0 ]; then
   show_cmd=$(echo ${show_cmd} | sed "s/{}/$result/g")
