@@ -10,7 +10,7 @@ _rofi() {
   rofi ${rofioption} -dmenu -i -p "rofi-auracle" "$@"
 }
 
-build() {
+buildpkg() {
   IFS=$'\n'
   buildsarr=($(ls $downloaddir | sed 's/:.*//'))
   unset IFS
@@ -26,15 +26,57 @@ build() {
   done
   
   build=$(echo $buildlist | _rofi -sep "|")
-  if [ -n "$build" ]; then
+  resp=$?
+  if [ $resp = 0 ]; then
+    if ( $(hasAURDeps $build) ); then
+      cd $downloaddir
+      confirm=$(echo "Yes|No" \
+        | _rofi -sep "|" -mesg \
+          "$build has deps from the AUR.
+$(getAURDeps $build)
+Go through building deps?")
+      
+      if [ "$confirm" = "Yes" ]; then
+        for dep in $(getAURDeps $build); do
+          ${editor} $dep/PKGBUILD
+        done
+        confirm=$(echo "Yes|No" | _rofi -sep "|" -mesg "Build all deps for $build?")
+        if [ "$confirm" = "Yes" ]; then
+          for d in $(getAURDeps $build); do
+            building $d
+          done
+        fi
+      fi
+    fi
+
     cd $downloaddir/$build
     ${editor} PKGBUILD
     confirm=$(echo "Yes|No" | _rofi -sep "|" -mesg "Build $build?")
     if [ "$confirm" = "Yes" ]; then
-      ${terminal} -d $downloaddir/$build -e "makepkg -si" --hold && \
-        notify-send "rofi-auracle" "Build complete for $build."
+      building $build
     fi
   fi
+}
+
+building() {
+  ${terminal} -d $downloaddir/$1 \
+    -e "makepkg -si" --hold && \
+    notify-send "rofi-auracle" "Build complete for $1"
+}
+
+hasAURDeps() {
+  package=$1
+  aurdeps=$(getAURDeps $package)
+  if [ -n "$aurdeps" ]; then
+    return 0
+  fi
+  return 1
+}
+
+getAURDeps() {
+  package=$1
+  aurdeps=$(auracle buildorder $package | grep -E '^(SATISFIED)?AUR' | cut -d ' ' -f2)
+  echo "${aurdeps[@]}"
 }
 
 clean() {
@@ -124,7 +166,7 @@ main() {
       sync
       ;;
     "build")
-      build
+      buildpkg
       ;;
     "clean")
       clean
