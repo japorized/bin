@@ -9,10 +9,11 @@ arg=$1
 app=$(xprop WM_CLASS -id $(xdotool getactivewindow) \
   | cut -d',' -f2 \
   | tr -d \" \
-  | tr '[:upper:]' '[:lower:]')
+  | tr '[:upper:]' '[:lower:]' \
+  | tr -d ' ')
 
 case "${app}" in
-  " firefox")
+  "firefox"|"chromium")
     case "${arg}" in
       "swipe-leftup-3") xdotool key alt+Right ;;
       "swipe-rightup-3") xdotool key alt+Left ;;
@@ -22,7 +23,7 @@ case "${app}" in
       "pinch-out") xdotool key ctrl+plus ;;
     esac
     ;;
-  " tabbed")
+  "tabbed")
     case "${arg}" in
       "swipe-left-3") xdotool key alt+l ;;
       "swipe-right-3") xdotool key alt+h ;;
