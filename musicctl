@@ -1,0 +1,43 @@
+#!/usr/bin/env dash
+# Using this script requires that you have a good grasp of what is going
+# on in your system, and how to interact with your music applications
+# through the command line.
+
+usage() {
+  echo "  Usage: musicctl <ARGUMENT>
+  Description:
+  This is an script that tries to tie a single universal command
+  to the various music applications that are used in the system.
+
+  Arguments:
+  toggle                Toggle play/pause
+  next                  Go to next track
+  prev                  Go to prev track
+
+  Current application fallback sequence:
+  Lollypop > mpd
+  "
+}
+
+if [ -z "$1" ]; then
+  echo "Please pass an argument"
+  exit 1
+fi
+
+isLollypopAlive=$(pgrep lollypop)
+
+if [ -n "$isLollypopAlive" ]; then
+  case "$1" in
+    "toggle") lollypop --play-pause ;;
+    "next") lollypop --next ;;
+    "prev") lollypop --prev ;;
+    *) exit 0 ;;
+  esac
+else
+  case "$1" in
+    "toggle") mpc toggle ;;
+    "next") mpc next ;;
+    "prev") mpc cdprev ;;
+    *) exit 0 ;;
+  esac
+fi
