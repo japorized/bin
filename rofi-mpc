@@ -1,14 +1,20 @@
 #!/usr/bin/env bash
 
+. $HOME/.cache/wpgtk.color
+
 mpc_status() {
-  status=$(mpc | sed -n 2p | awk -F " " '{print $1}')
-  echo ${status} | sed "s/\&/\&amp;/g"
+  status=$(mpc | sed -n 2p | awk -F " " '{print $1}' | sed "s/\&/\&amp;/g")
+  if [ "$status" = "[paused]" ]; then
+    echo ""
+  else
+    echo ""
+  fi
 }
 
 _rofi() {
   rofi -sep '|' -columns 8 -lines 1 -disable-history true -cycle true \
     -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 550 -height 20 \
-    -dmenu -font "Hack Nerd Font 10" -mesg "$(mpc_status) $(mpc current | sed 's/\&/\&amp;/g')"
+    -dmenu -font "Hack Nerd Font 10" -mesg "<span background='$color3' foreground='$color0'> $(mpc_status) </span> $(mpc current | sed 's/\&/\&amp;/g')"
 }
 
 inform() {
