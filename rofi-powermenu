@@ -1,48 +1,72 @@
 #!/usr/bin/env bash
 
+. $HOME/.cache/wpgtk.color
+
+config=$XDG_CONFIG_HOME/rofi/script-configs/rofi-powermenu.sh
+
+title_font="Z003"
+subtitle_font="Fantasque Sans Mono"
+icon_font="Hack Nerd Font"
+
+exit_sound=$XDG_DATA_HOME/sounds/場面転換サウンドロゴ_002.m4a
+
+if [ -f "$config" ]; then
+  . $config
+fi
+
 _rofi() {
   rofi -sep '|' -columns 6 -lines 1 -disable-history true -cycle true \
     -theme ~/.config/rofi/theme/rofi-simplemenu.rasi -width 80 -height 200 \
-    -dmenu -font "Hack Nerd Font 40" "$@"
+    -dmenu -font "${icon_font} 40" "$@"
 }
 
-play_exit_sound() {
-  ffplay -nodisp -loglevel quiet -vn -t 6.5 -autoexit \
-    $XDG_DATA_HOME/sounds/場面転換サウンドロゴ_002.m4a
+play() {
+  ffplay -nodisp -loglevel quiet -vn -t 6.5 -autoexit $1
 }
 
-choice=$(echo -n "|||||" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Goodbye, Japorized!</span>")
+asTitle() {
+  echo "<span face='${title_font}' font='40'>$@</span>"
+}
+
+asSubtitle() {
+  echo "<span face='${subtitle_font}' font='16' weight='bold'>$@</span>"
+}
+
+curUptime=$(uptime -p | sed 's/up //g')
+choice=$(echo -n "|||||" | _rofi -mesg "$(asTitle "Power controls")
+$(asSubtitle "<span background='$color3' foreground='$color0'> uptime </span> - $curUptime")")
 
 case "$choice" in
   )
     slock
     ;;
   )
+    slock &
     ~/.bin/displaysleep
     ;;
   )
     systemctl suspend
     ;;
   )
-    choice=$(echo -n "No|Yes" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Logging out. Are you sure?</span>")
+    choice=$(echo -n "No|Yes" | _rofi -mesg  "$(asTitle 'Logging out. Are you sure?')")
     if [ "$choice" = "Yes" ]; then
       cleandesktop.sh
-      play_exit_sound
+      play $exit_sound
       bspc quit
     fi
     ;;
   )
-    choice=$(echo -n "No|Yes" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Rebooting. Are you sure?</span>")
+    choice=$(echo -n "No|Yes" | _rofi -mesg "$(asTitle 'Rebooting. Are you sure?')")
     if [ "$choice" = "Yes" ]; then
       cleandesktop.sh
       systemctl reboot
     fi
     ;;
   )
-    choice=$(echo -n "No|Yes" | _rofi -mesg "<span face='ClearSans' font='30' weight='bold'>Powering off. Are you sure?</span>")
+    choice=$(echo -n "No|Yes" | _rofi -mesg "$(asTitle 'Powering off. Are you sure?')")
     if [ "$choice" = "Yes" ]; then
       cleandesktop.sh
-      play_exit_sound
+      play $exit_sound
       systemctl poweroff
     fi
     ;;
