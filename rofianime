@@ -18,7 +18,7 @@ animedir="$HOME/Videos/Anime"
 vidplayer="/usr/bin/mpv"
 filemanager="/usr/bin/thunar"
 fileext="(.mkv|.mp4|.webm)" # use regex (PCRE)
-renamers="HorribleSubs|Teasing Anon" # |-separated
+renamers="HorribleSubs|Teasing Anon|Judas|Anon" # |-separated
 rofiopts=""
 dmenuopts=""
 
@@ -44,7 +44,7 @@ _rofi() {
 
 _renamer() {
   case "$1" in
-    "HorribleSubs" | "Teasing Anon")
+    "HorribleSubs" | "Teasing Anon" | "Judas" | "Anon")
       for f in *"$1"* ; do
         filename=$(echo $f \
           | sed "s/\[$1\] //g" \
