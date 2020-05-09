@@ -9,6 +9,10 @@
 
 MUSIC_DIR=$HOME/Music
 
+_notify() {
+  notify-send.py --app-name "mpd" "Now Playing ♫" "$@"
+}
+
 {
   current="$(mpc current)"
   album="$(mpc --format %album% current)"
@@ -21,11 +25,11 @@ MUSIC_DIR=$HOME/Music
   src="$(echo -n "$covers" | head -n1)"
   if [[ -n "$src" ]] ; then
       if [[ -f "$src" ]] ; then
-        notify-send --icon="$src" "Now Playing ♫" "$album\n$current"
+        _notify "$album\n$current" --hint "string:image-path:$src"
       else
-        notify-send "Now Playing ♫" "$album\n$current"
+        _notify "$album\n$current"
       fi
   else
-    notify-send "Now Playing ♫" "$album\n$current"
+    _notify "$album\n$current"
   fi
 } &
