@@ -127,5 +127,6 @@ if (! $f_flag); then
   esac
 fi
 
-magnet="${links[$selno]}"   # get magnet of selected show
+magnet=$(echo ${links[$selno]} | sed 's/\&amp;/\&/g')   # get magnet of selected show
+# echo $magnet        # uncomment for debug
 ${btdler} "$magnet"   # download
