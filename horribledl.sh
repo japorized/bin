@@ -43,7 +43,13 @@ f_flag=false
 while getopts "r:RUs:f" opt; do
   case "${opt}" in
     r) res="$OPTARG" ;;
-    R) updateRSS ;;
+    R)
+      updateRSS
+      if [ $? -ne 0 ]; then
+        echo "Database update failed"
+        exit 1
+      fi
+      ;;
     U)
       updateRSS
       exit 0
