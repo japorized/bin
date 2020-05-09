@@ -1,0 +1,13 @@
+#!/usr/bin/env dash
+
+isBluetoohPowered=$( \
+  bluetoothctl show | grep Powered | cut -d ':' -f2 | tr -d ' '
+)
+
+if [ "$isBluetoohPowered" = "yes" ]; then
+  bluetoothctl power off
+  notify-send.py a --hint boolean:deadd-notification-center:true int:id:0 boolean:state:false
+else
+  bluetoothctl power on
+  notify-send.py a --hint boolean:deadd-notification-center:true int:id:0 boolean:state:true
+fi

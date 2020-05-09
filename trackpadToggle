@@ -3,11 +3,19 @@
 trackpadStatus=$(cat $HOME/.cache/trackpadStatus)
 trackpadInputDeviceName="Synaptics TM3383-032"
 
+deaddPid=$(pidof deadd-notification-center)
+
 if [ "$trackpadStatus" = "on" ]
 then
-  xinput disable "SynPS/2 Synaptics TouchPad"
+  xinput disable "$trackpadInputDeviceName"
+  if [ -n "$deaddPid" ]; then
+    notify-send.py a --hint boolean:deadd-notification-center:true int:id:2 boolean:state:false
+  fi
   echo "off" > $HOME/.cache/trackpadStatus
 else
-  xinput enable "SynPS/2 Synaptics TouchPad"
+  xinput enable "$trackpadInputDeviceName"
+  if [ -n "$deaddPid" ]; then
+    notify-send.py a --hint boolean:deadd-notification-center:true int:id:2 boolean:state:true
+  fi
   echo "on" > $HOME/.cache/trackpadStatus
 fi

@@ -1,0 +1,14 @@
+#!/usr/bin/env dash
+
+wifiInterface=wlp5s0
+systemdService="netctl-auto@$wifiInterface.service"
+isNetctlAutoRunning=$( \
+  systemctl status $systemdService \
+  | grep Active | grep running \
+)
+
+if [ -n "$isNetctlAutoRunning" ]; then
+  systemctl stop $systemdService
+else
+  systemctl start $systemdService
+fi

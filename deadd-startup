@@ -1,0 +1,29 @@
+#!/usr/bin/env dash
+
+# highlight bluetooth if it is already powered
+isBluetoohPowered=$( \
+  bluetoothctl show | grep Powered | cut -d ':' -f2 | tr -d ' '
+)
+if [ "$isBluetoohPowered" = "yes" ]; then
+  notify-send.py a --hint boolean:deadd-notification-center:true int:id:0 boolean:state:true
+fi
+
+# highlight wifi if it is already on
+wifiInterface=wlp5s0
+systemdService="netctl-auto@$wifiInterface.service"
+isNetctlAutoRunning=$( \
+  systemctl status $systemdService \
+  | grep Active | grep running \
+)
+
+if [ -n "$isNetctlAutoRunning" ]; then
+  notify-send.py a --hint boolean:deadd-notification-center:true int:id:1 boolean:state:true
+fi
+
+# highlight trackpad status
+trackpadStatus=$(cat $HOME/.cache/trackpadStatus)
+
+if [ "$trackpadStatus" = "on" ]
+then
+  notify-send.py a --hint boolean:deadd-notification-center:true int:id:2 boolean:state:true
+fi
