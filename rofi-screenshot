@@ -30,6 +30,14 @@ _rofi() {
     "$@"
 }
 
+_rofiError() {
+  rofi -lines 1  \
+    -theme $XDG_CONFIG_HOME/rofi/theme/rofi-smallmenu.rasi \
+    -location 5 -width 550 -height 20 \
+    -font "${font}" \
+    -e "$@"
+}
+
 toggleShadow() {
   if ($shadow_flag); then
     opts=$(echo "$opts" | sed 's/-s//g' | awk '{$1=$1};1')
@@ -59,7 +67,10 @@ toggleDelay() {
     rofi_retval=$?
 
     case "${rofi_retval}" in
-      1) exit 1 ;;
+      1)
+        _rofi -e -mesg "Delay setting cancelled"
+        main
+        ;;
       0)
         opts="$opts -d ${delay}"
         delay_flag=true
@@ -117,6 +128,10 @@ $(getOptionMessage)"
           ;;
         濾)
           ${screenshot} ${opts} s
+          retval=$?
+          if [ $retval = 1 ]; then
+            _rofiError "Screenshot cancelled"
+          fi
           ;;
         类)
           ${screenshot} ${opts} w
