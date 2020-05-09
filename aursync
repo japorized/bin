@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+builddir=$HOME/Downloads/builds
+
+usage() {
+  echo "  aursync
+  Swiss-army knife for various pacman sync operations
+
+  Usage: aursync [FLAGS] <QUERY>
+
+  FLAGS:
+  <default>     Show package info (auracle info)
+  d             Download selected package (auracle download -r)
+  "
+}
+
+# post_download_actions() {
+#   cd $builddir
+#   auracle download -r $1
+#   echo "Showing build order:"
+#   auracle buildorder $1
+# }
+
+download_flag=false
+
+while getopts "d" opt; do
+  case "${opt}" in
+    d) download_flag=true ;;
+    \?)
+      usage
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
+# Make sure that a query exists
+query=$1
+if [ -z "$query" ]; then
+  echo "No query passed"
+  exit 0
+fi
+
+show_cmd="auracle info {}"
+
+result=$(auracle --quiet search ${query} | fzf --reverse --preview="${show_cmd}")
+retval=$?
+if [ $retval -eq 0 ]; then
+  if ($download_flag); then
+    echo "Attempt downloading package:"
+    auracle info $result
+    cd $builddir && auracle download -r $result
+  else
+    show_cmd=$(echo ${show_cmd} | sed "s/{}/$result/g")
+    ${show_cmd} | less
+  fi
+
+fi
