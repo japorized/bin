@@ -1,5 +1,11 @@
-#!/usr/bin/env dash
+#!/usr/bin/env bash
+# Deps:
+# - bat (https://github.com/sharkdp/bat)
+# - curl
 
+: "${EDITOR:=vi}"
+
+baseurl="https://cheat.sh"
 CHEAT_DIR=$XDG_DATA_HOME/cheat
 
 edit_flag=false
@@ -22,8 +28,18 @@ usage() {
   -l      List cheatsheets"
 }
 
-_pygmentize() {
-  $(which pygmentize) -l bash "$@"
+_bat() {
+  $(which bat) -pp -l bash "$@"
+}
+
+download() {
+  cmd=$1
+  opts=$2
+  if [ -n "$cmd" ]; then
+    curl --silent "${baseurl}/${cmd}?T${opts}" > $CHEAT_DIR/${cmd}
+  else
+    echo "Please provide cmd"
+  fi
 }
 
 while getopts "edlDh" opt; do
@@ -55,7 +71,7 @@ if ($delete_flag); then
 fi
 
 if ($download_flag); then
-  cheat-sh-download.sh "$1"
+  download "$1"
   retval=$?
   case "$retval" in
     0) echo "Download successful: $1" ;;
@@ -72,7 +88,7 @@ if ($edit_flag); then
 fi
 
 if [ -f "$CHEAT_DIR/$1" ]; then
-  _pygmentize "$CHEAT_DIR/$1"
+  _bat "$CHEAT_DIR/$1"
 else
   echo "Cheat not found"
 fi
