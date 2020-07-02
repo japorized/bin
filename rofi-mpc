@@ -11,6 +11,32 @@ mpc_status() {
   fi
 }
 
+mpc_status_opposite() {
+  if [ "$(mpc_status)" == "" ]; then
+    echo ""
+  else
+    echo ""
+  fi
+}
+
+mpc_get_mode() {
+  local arg=$1
+
+  output=$(mpc | tail -1 | cut -f2- | sed 's/: /:/g')
+  last="dummy-init"
+  
+  while [ $(echo $iteration | sed "s/^$arg//g") != $last ]; do
+    last=iteration
+    iteration=$(echo $iteration | sed "s/^$arg//g")
+  done
+  echo $iteration
+  if [[ $mode == "$arg: on" ]]; then
+    echo "on"
+  else
+    echo "off"
+  fi
+}
+
 _rofi() {
   rofi -sep '|' -columns 8 -lines 1 -disable-history true -cycle true \
     -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 550 -height 20 \
@@ -18,34 +44,34 @@ _rofi() {
 }
 
 inform() {
-  sleep 0.5
-  show-lemonbar nowplaying
+  # show-lemonbar nowplaying
+  notify-send.py --replaces-process "rofi-mpc" "rofi-mpc" "$@"
 }
 
-choice=$(echo -n "||||凌||綾|||" | _rofi)
+choice=$(echo -n "|$(mpc_status_opposite)|||凌||綾|||" | _rofi)
 
 case "$choice" in
   )
-    mpc cdprev && inform
+    mpc cdprev && inform "Playing previous track"
     ;;
-  )
-    mpc toggle && inform
+  |)
+    mpc toggle && inform "$(if [ $choice == '' ]; then echo 'Continuing playback'; else echo 'Pausing'; fi)"
     ;;
   )
-    mpc next && inform
+    mpc next && inform "Playing next track"
     ;;
   )
     vol=$(echo -n "100|75|50|25|+5|-5" | _rofi)
     mpc volume ${vol}
     ;;
   )
-    mpc repeat && inform
+    mpc -q repeat && inform "mpc repeat $(mpc_get_mode repeat)"
     ;;
   凌)
-    mpc random && inform
+    mpc -q random && inform
     ;;
   綾)
-    mpc single && inform
+    mpc -q single && inform
     ;;
   )
     cross=$(echo -n "0|1|5|7|10|15" | _rofi)
