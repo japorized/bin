@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 _rofi() {
-  rofi -sep '|' -columns 4 -lines 1 -disable-history true -cycle true \
+  rofi -sep '|' -columns 5 -lines 1 -disable-history true -cycle true \
     -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 280 -height 20 \
     -dmenu -font "Hack Nerd Font 10" -mesg "what to do"
 }
 
-choice=$(echo -n "|||" | _rofi)
+choice=$(echo -n "||||" | _rofi)
 
 case "$choice" in
   )
@@ -18,8 +18,20 @@ case "$choice" in
   )
     /usr/bin/thunar "$1"
     ;;
-  )
+  )
     dest=$(/usr/bin/zenity --file-selection --save --confirm-overwrite)
-    mv "$1/$2" "$dest"
+
+    filename=${dest##*/}
+    destExt=${filename##*.}
+    if [ "$destExt" != "png" ]; then
+      convert "$1/$2" "$dest"
+      rm "$1/$2"
+    else
+      mv "$1/$2" "$dest"
+    fi
+
+    ;; 
+  )
+    /usr/bin/dragon-drag-and-drop "$1/$2"
     ;;
 esac
