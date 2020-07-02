@@ -118,16 +118,19 @@ def main
           toggleDelay
           main
         when ""
+          sleep(0.3)
           `#{$scrotcmd} #{getScrotOpts()} fullscreen`
           if $?.exitstatus != 0
             `#{$cancelNoti}`
           end
         when "濾" 
+          sleep(0.3)
           `#{$scrotcmd} #{getScrotOpts()} select`
           if $?.exitstatus != 0
             `#{$cancelNoti}`
           end
         when "类"
+          sleep(0.3)
           `#{$scrotcmd} #{getScrotOpts()} window`
           if $?.exitstatus != 0
             `#{$cancelNoti}`

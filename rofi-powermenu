@@ -29,12 +29,14 @@ asTitle() {
 }
 
 asSubtitle() {
-  echo "<span face='${subtitle_font}' font='16' weight='bold'>$@</span>"
+  echo "<span face='${subtitle_font}' font='16'>$@</span>"
 }
 
 curUptime=$(uptime -p | sed 's/up //g')
 choice=$(echo -n "|||||" | _rofi -mesg "$(asTitle "Power controls")
-$(asSubtitle "<span background='$color3' foreground='$color0'> uptime </span> - $curUptime")")
+$(asSubtitle "
+<span background='$color3' foreground='$color0' weight='bold'> hostname </span>  $(hostname)
+<span background='$color3' foreground='$color0' weight='bold'>   uptime </span>  $curUptime")")
 
 case "$choice" in
   )
