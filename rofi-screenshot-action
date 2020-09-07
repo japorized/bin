@@ -6,7 +6,7 @@ _rofi() {
     -dmenu -font "Hack Nerd Font 10" -mesg "what to do"
 }
 
-choice=$(echo -n "||||" | _rofi)
+choice=$(echo -n "|||||" | _rofi)
 
 case "$choice" in
   )
@@ -18,7 +18,10 @@ case "$choice" in
   )
     /usr/bin/thunar "$1"
     ;;
-  )
+  )
+    rm "$1/$2"
+    ;;
+  )
     dest=$(/usr/bin/zenity --file-selection --save --confirm-overwrite)
 
     filename=${dest##*/}
