@@ -13,7 +13,7 @@ app=$(xprop WM_CLASS -id $(xdotool getactivewindow) \
   | tr -d ' ')
 
 case "${app}" in
-  "firefox"|"chromium")
+  "firefox"|"chromium"|"firefoxdeveloperedition")
     case "${arg}" in
       "swipe-leftup-3") xdotool key alt+Right ;;
       "swipe-rightup-3") xdotool key alt+Left ;;
