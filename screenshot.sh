@@ -18,6 +18,7 @@ usage() {
   -c                        Copy to clipboard
   -d                        Screenshot with delay [in seconds] (default: 0)
   -s                        Screenshot with shadow
+  -u                        Screenshot with cursor
 
   Argument:
   f  | fullscreen           Screenshot entirety of focused screen
@@ -37,11 +38,11 @@ if [ -z $1 ]; then
 fi
 
 _maim() {
-  maim --quality 1 --hidecursor --quiet "$@"
+  maim --quality 1 --quiet "$@"
 }
 
 _maim_lq() {
-  maim --quality 6 --hidecursor --quiet "$@"
+  maim --quality 6 --quiet "$@"
 }
 
 _copytoclipboard() {
@@ -59,15 +60,17 @@ _playshuttersound() {
 }
 
 datetime=$(date "+%Y-%m-%d-%H%M%S")
-s_flag=false
-c_flag=false
+s_flag=false  # shadow
+c_flag=false  # copy
+u_flag=false  # show cursor (not that this is opposite to maim)
 delay=0
 
-while getopts "cd:sh" opt; do
+while getopts "cd:shu" opt; do
   case "${opt}" in
     c) c_flag=true ;;
     d) delay=$OPTARG ;;
     s) s_flag=true ;;
+    u) u_flag=true ;;
     h)
       usage
       exit 0
@@ -106,8 +109,14 @@ case $1 in
     exit 1
 esac
 
+getHideCursorStatus() {
+  if ( ! $u_flag ); then
+    echo "--hidecursor"
+  fi
+}
+
 if ($sc_flag); then
-  _maim_lq ${secondary_args} | _makeshadow "$cachefile"
+  _maim_lq $(getHideCursorStatus) ${secondary_args} | _makeshadow "$cachefile"
   retval=$?
   if [ $retval = 0 ]; then
     _playshuttersound
@@ -117,7 +126,7 @@ if ($sc_flag); then
     exit 1
   fi
 elif ($c_flag); then
-  _maim_lq ${secondary_args} | _copytoclipboard
+  _maim_lq $(getHideCursorStatus) ${secondary_args} | _copytoclipboard
   retval=$?
   if [ $retval = 0 ]; then
     _playshuttersound
@@ -126,10 +135,10 @@ elif ($c_flag); then
     exit 1
   fi
 elif ($s_flag); then
-  _maim ${secondary_args} | _makeshadow "$enddir/$datetime.png"
+  _maim $(getHideCursorStatus) ${secondary_args} | _makeshadow "$enddir/$datetime.png"
   retval=$?
 else
-  _maim ${secondary_args} "$enddir/$datetime.png"
+  _maim $(getHideCursorStatus) ${secondary_args} "$enddir/$datetime.png"
   retval=$?
 fi
 
