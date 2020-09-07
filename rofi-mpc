@@ -39,7 +39,7 @@ mpc_get_mode() {
 
 _rofi() {
   rofi -sep '|' -columns 8 -lines 1 -disable-history true -cycle true \
-    -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 550 -height 20 \
+    -theme rofi-smallmenu.rasi -location 5 -width 550 -height 20 \
     -dmenu -font "Hack Nerd Font 10" -mesg "<span background='$color3' foreground='$color0'> $(mpc_status) </span> $(mpc current | sed 's/\&/\&amp;/g')"
 }
 

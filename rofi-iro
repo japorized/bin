@@ -17,7 +17,7 @@ opts=""
 
 _rofi() {
   rofi -sep '|' -columns 8 -lines 1 -disable-history true -cycle true \
-    -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 400 -height 20 \
+    -theme rofi-smallmenu.rasi -location 5 -width 400 -height 20 \
     -dmenu -font "Hack Nerd Font 10" "$@"
 }
 

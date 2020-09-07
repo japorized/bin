@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 _rofi() {
-  rofi -sep '|' -columns 5 -lines 1 -disable-history true -cycle true \
-    -theme ~/.config/rofi/theme/rofi-smallmenu.rasi -location 5 -width 280 -height 20 \
+  rofi -sep '|' -columns 6 -lines 1 -disable-history true -cycle true \
+    -theme rofi-smallmenu.rasi -location 5 -width 280 -height 20 \
     -dmenu -font "Hack Nerd Font 10" -mesg "what to do"
 }
 

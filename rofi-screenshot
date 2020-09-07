@@ -24,7 +24,7 @@ screenshot=$HOME/.bin/screenshot.sh
 
 _rofi() {
   rofi -sep '|' -columns 3 -lines 1 -disable-history true -cycle true \
-    -theme $XDG_CONFIG_HOME/rofi/theme/rofi-smallmenu.rasi \
+    -theme rofi-smallmenu.rasi \
     -location 5 -width 550 -height 20 \
     -dmenu -font "${font}" \
     "$@"
@@ -32,7 +32,7 @@ _rofi() {
 
 _rofiError() {
   rofi -lines 1  \
-    -theme $XDG_CONFIG_HOME/rofi/theme/rofi-smallmenu.rasi \
+    -theme rofi-smallmenu.rasi \
     -location 5 -width 550 -height 20 \
     -font "${font}" \
     -e "$@"

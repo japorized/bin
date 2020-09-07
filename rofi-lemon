@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 _rofi() {
-  rofi -theme $HOME/.config/rofi/theme/rofi-simplemenu.rasi \
+  rofi -theme rofi-simplemenu.rasi \
     -sep '|' ${rofioptions} -dmenu -i -mesg "Show indicator" \
     -kb-custom-1 "n" -kb-custom-2 "w" -kb-custom-3 "W"
 }

@@ -35,15 +35,15 @@ $cancelNoti="$HOME/.config/lemonbar/show.sh 'Scrot cancelled'  "
 def rofi(opts, *args)
   options = args.join('|')
   `echo -n "#{options}" | \
-     -theme "$XDG_CONFIG_HOME/rofi/theme/rofi-sidemenu.rasi" \
    rofi -sep '|' -columns 1 -lines 7 -disable-history true -cycle true \
+     -theme "rofi-sidemenu.rasi" \
      -location 4 -width 5 \
      -dmenu -font "#{$font}" \
      #{opts}`
 end
 
 def rofimsg(msg)
-  `rofi -theme "$XDG_CONFIG_HOME/rofi/theme/rofi-smallmenu.rasi" \
+  `rofi -theme "rofi-smallmenu.rasi" \
      -location 5 -width 170 -height 50 \
      -font "#{$font}" \
      -e '#{msg}'`

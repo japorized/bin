@@ -6,7 +6,7 @@ rofi_greeting="Greetings, Japorized!"
 
 _rofi() {
   rofi -sep '|' -columns 5 -lines 2 -disable-history true -cycle true \
-    -theme ~/.config/rofi/theme/rofi-simplemenu.rasi -width 80 -height 200 \
+    -theme rofi-simplemenu.rasi -width 80 -height 200 \
     -no-show-icons -dmenu -font "${rofi_mainfont}" \
     -mesg "<span face='ClearSans' font_size='x-large' weight='bold'>${rofi_greeting}</span>"
 }

@@ -16,7 +16,7 @@ fi
 
 _rofi() {
   rofi -sep '|' -columns 6 -lines 1 -disable-history true -cycle true \
-    -theme ~/.config/rofi/theme/rofi-simplemenu.rasi -width 80 -height 200 \
+    -theme rofi-simplemenu.rasi -width 80 -height 200 \
     -dmenu -font "${icon_font} 40" "$@"
 }
 
@@ -25,18 +25,22 @@ play() {
 }
 
 asTitle() {
-  echo "<span face='${title_font}' font='40'>$@</span>"
+  echo -n "<span face='${title_font}' font='40'>$@</span>"
 }
 
 asSubtitle() {
-  echo "<span face='${subtitle_font}' font='16'>$@</span>"
+  echo -n "<span face='${subtitle_font}' font='16'>$@</span>"
+}
+
+mesg() {
+  echo -n "$(asTitle "Power controls")
+$(asSubtitle "
+<span background='$color3' foreground='$color0' weight='bold'> hostname </span>  $(hostname)
+<span background='$color3' foreground='$color0' weight='bold'>   uptime </span>  $curUptime")"
 }
 
 curUptime=$(uptime -p | sed 's/up //g')
-choice=$(echo -n "|||||" | _rofi -mesg "$(asTitle "Power controls")
-$(asSubtitle "
-<span background='$color3' foreground='$color0' weight='bold'> hostname </span>  $(hostname)
-<span background='$color3' foreground='$color0' weight='bold'>   uptime </span>  $curUptime")")
+choice=$(echo -n "|||||" | _rofi -mesg "$(mesg)")
 
 case "$choice" in
   )
